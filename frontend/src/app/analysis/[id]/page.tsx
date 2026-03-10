@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { FollowUpEmail } from "@/lib/analysis-types";
+import { downloadAnalysisPdf } from "@/components/pdf/analysis-pdf";
 import { ExecutiveSummaryCard } from "@/components/cards/executive-summary-card";
 import { KeyMetricsCard } from "@/components/cards/key-metrics-card";
 import { NextStepsCard } from "@/components/cards/next-steps-card";
@@ -106,14 +107,28 @@ export default function AnalysisPage() {
               Click directly into any card below to correct wording, numbers, or mappings before export.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => followUpMutation.mutate()}
-            disabled={!result || followUpMutation.isPending}
-            className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {followUpMutation.isPending ? "Generating..." : "Generate follow-up"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (result) {
+                  void downloadAnalysisPdf(result, analysisId);
+                }
+              }}
+              disabled={!result}
+              className="rounded-full border border-card bg-white/80 px-5 py-3 text-sm font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Download PDF
+            </button>
+            <button
+              type="button"
+              onClick={() => followUpMutation.mutate()}
+              disabled={!result || followUpMutation.isPending}
+              className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {followUpMutation.isPending ? "Generating..." : "Generate follow-up"}
+            </button>
+          </div>
         </div>
 
         {followUp ? (

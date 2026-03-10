@@ -11,6 +11,10 @@ class UnsupportedFileTypeError(ValueError):
     pass
 
 
+def _format_csv_cell(value: object) -> str:
+    return str(value).replace("|", "\\|").replace("\n", " ").strip()
+
+
 def parse_txt(file_bytes: bytes) -> str:
     return file_bytes.decode("utf-8", errors="ignore").strip()
 
@@ -28,7 +32,18 @@ def parse_pdf(file_bytes: bytes) -> str:
 
 def parse_csv(file_bytes: bytes) -> str:
     dataframe = pd.read_csv(StringIO(file_bytes.decode("utf-8", errors="ignore")))
-    return dataframe.to_markdown(index=False)
+    headers = [_format_csv_cell(column) for column in dataframe.columns.tolist()]
+    separator = ["---"] * len(headers)
+    rows = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(separator) + " |",
+    ]
+
+    for row in dataframe.itertuples(index=False, name=None):
+        values = [_format_csv_cell(value) for value in row]
+        rows.append("| " + " | ".join(values) + " |")
+
+    return "\n".join(rows)
 
 
 def detect_and_parse(filename: str, file_bytes: bytes) -> str:
