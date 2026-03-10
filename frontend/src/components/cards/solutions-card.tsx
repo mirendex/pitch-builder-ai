@@ -1,4 +1,7 @@
+"use client";
+
 import { CopyButton } from "@/components/copy-button";
+import { useUiStore } from "@/stores/ui";
 
 type Solution = {
   title: string;
@@ -7,6 +10,7 @@ type Solution = {
 };
 
 export function SolutionsCard({ solutions }: { solutions: Solution[] }) {
+  const updateSolution = useUiStore((state) => state.updateSolution);
   const plainText = solutions
     .map(
       (solution) =>
@@ -30,11 +34,33 @@ export function SolutionsCard({ solutions }: { solutions: Solution[] }) {
       <div className="mt-4 space-y-3">
         {solutions.map((solution) => (
           <div key={solution.title} className="rounded-2xl bg-white/60 p-4">
-            <p className="font-medium">{solution.title}</p>
-            <p className="mt-2 text-sm text-muted">{solution.description}</p>
-            <p className="mt-3 text-xs uppercase tracking-[0.2em] text-accent-strong">
-              Links: {solution.linked_pain_points.join(", ") || "Not mapped"}
-            </p>
+            <input
+              value={solution.title}
+              onChange={(event) => updateSolution(solutions.indexOf(solution), "title", event.target.value)}
+              className="w-full rounded-xl border border-card bg-white/80 px-3 py-2 font-medium outline-none focus:border-orange-600"
+            />
+            <textarea
+              value={solution.description}
+              onChange={(event) => updateSolution(solutions.indexOf(solution), "description", event.target.value)}
+              className="mt-2 min-h-24 w-full resize-none rounded-2xl border border-card bg-white/70 px-3 py-3 text-sm text-muted outline-none focus:border-orange-600"
+            />
+            <label className="mt-3 block space-y-2">
+              <span className="text-xs uppercase tracking-[0.2em] text-accent-strong">Linked pain points</span>
+              <input
+                value={solution.linked_pain_points.join(", ")}
+                onChange={(event) =>
+                  updateSolution(
+                    solutions.indexOf(solution),
+                    "linked_pain_points",
+                    event.target.value
+                      .split(",")
+                      .map((item) => item.trim())
+                      .filter(Boolean),
+                  )
+                }
+                className="w-full rounded-xl border border-card bg-white/80 px-3 py-2 text-sm outline-none focus:border-orange-600"
+              />
+            </label>
           </div>
         ))}
       </div>

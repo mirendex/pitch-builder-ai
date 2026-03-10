@@ -59,6 +59,7 @@ class GenerateEmailRequest(BaseModel):
     api_key: str | None = None
     base_url: str
     model: str = "openai/gpt-4o-mini"
+    analysis_result: AnalysisResult | None = None
 
 
 class AnalysisListItem(BaseModel):

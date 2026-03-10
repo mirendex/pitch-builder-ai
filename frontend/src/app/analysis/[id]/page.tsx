@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { FollowUpEmail } from "@/lib/analysis-types";
 import { ExecutiveSummaryCard } from "@/components/cards/executive-summary-card";
 import { KeyMetricsCard } from "@/components/cards/key-metrics-card";
 import { NextStepsCard } from "@/components/cards/next-steps-card";
@@ -11,19 +12,25 @@ import { PainPointsCard } from "@/components/cards/pain-points-card";
 import { ProfileCard } from "@/components/cards/profile-card";
 import { SolutionsCard } from "@/components/cards/solutions-card";
 import { fetchAnalysisById, generateFollowUp, subscribeToStream } from "@/lib/api";
+import { useUiStore } from "@/stores/ui";
 
 export default function AnalysisPage() {
   const params = useParams<{ id: string }>();
   const analysisId = params.id;
   const [status, setStatus] = useState("Connecting...");
-  const [followUp, setFollowUp] = useState<{ subject: string; body: string } | null>(null);
+  const [followUp, setFollowUp] = useState<FollowUpEmail | null>(null);
+  const editedAnalysis = useUiStore((state) => state.editedAnalysis);
+  const activeAnalysisId = useUiStore((state) => state.activeAnalysisId);
+  const setActiveAnalysisId = useUiStore((state) => state.setActiveAnalysisId);
+  const initializeEditedAnalysis = useUiStore((state) => state.initializeEditedAnalysis);
+  const resetEditedAnalysis = useUiStore((state) => state.resetEditedAnalysis);
   const analysisQuery = useQuery({
     queryKey: ["analysis", analysisId],
     queryFn: () => fetchAnalysisById(analysisId),
     refetchInterval: (query) => (query.state.data?.status === "done" ? false : 3_000),
   });
   const followUpMutation = useMutation({
-    mutationFn: () => generateFollowUp(analysisId),
+    mutationFn: () => generateFollowUp(analysisId, editedAnalysis),
     onSuccess: (data) => {
       setFollowUp(data);
       toast.success("Follow-up email drafted.");
@@ -32,6 +39,20 @@ export default function AnalysisPage() {
       toast.error(error.message);
     },
   });
+
+  useEffect(() => {
+    if (activeAnalysisId !== analysisId) {
+      setActiveAnalysisId(analysisId);
+      resetEditedAnalysis();
+      setFollowUp(null);
+    }
+  }, [activeAnalysisId, analysisId, resetEditedAnalysis, setActiveAnalysisId]);
+
+  useEffect(() => {
+    if (analysisQuery.data?.result_json) {
+      initializeEditedAnalysis(analysisQuery.data.result_json);
+    }
+  }, [analysisQuery.data?.result_json, initializeEditedAnalysis]);
 
   useEffect(() => {
     const stream = subscribeToStream(analysisId);
@@ -71,7 +92,7 @@ export default function AnalysisPage() {
     return null;
   }
 
-  const result = data.result_json;
+  const result = editedAnalysis ?? data.result_json;
 
   return (
     <main className="shell py-10">
@@ -81,6 +102,9 @@ export default function AnalysisPage() {
             <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Live status</p>
             <h1 className="mt-3 text-4xl font-semibold capitalize">{data.status}</h1>
             <p className="mt-2 text-muted">{status}</p>
+            <p className="mt-3 text-sm text-muted">
+              Click directly into any card below to correct wording, numbers, or mappings before export.
+            </p>
           </div>
           <button
             type="button"

@@ -26,7 +26,7 @@ async def create_follow_up_email(
             detail="Completed analysis not found.",
         )
 
-    analysis_result = AnalysisResult.model_validate(json.loads(analysis.result_json))
+    analysis_result = payload.analysis_result or AnalysisResult.model_validate(json.loads(analysis.result_json))
     try:
         return await generate_follow_up_email(
             analysis_result=analysis_result,

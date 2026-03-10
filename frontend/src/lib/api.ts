@@ -1,4 +1,5 @@
 import { useSettingsStore } from "@/stores/settings";
+import type { AnalysisDetail, AnalysisResult, FollowUpEmail } from "@/lib/analysis-types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -74,10 +75,10 @@ export async function fetchAnalysisById(analysisId: string) {
     throw new Error("Failed to load analysis.");
   }
 
-  return response.json();
+  return (await response.json()) as AnalysisDetail;
 }
 
-export async function generateFollowUp(analysisId: string) {
+export async function generateFollowUp(analysisId: string, analysisResult?: AnalysisResult | null) {
   const { apiKey, baseUrl, provider } = useSettingsStore.getState();
   const response = await fetch(`${API_URL}/api/v1/generate-email`, {
     method: "POST",
@@ -88,14 +89,16 @@ export async function generateFollowUp(analysisId: string) {
       analysis_id: analysisId,
       api_key: provider === "openrouter" ? apiKey : null,
       base_url: baseUrl,
+      analysis_result: analysisResult,
     }),
   });
 
   if (!response.ok) {
-    throw new Error("Failed to generate follow-up.");
+    const error = await response.json().catch(() => ({ detail: "Failed to generate follow-up." }));
+    throw new Error(error.detail ?? "Failed to generate follow-up.");
   }
 
-  return response.json();
+  return (await response.json()) as FollowUpEmail;
 }
 
 export function subscribeToStream(analysisId: string) {
