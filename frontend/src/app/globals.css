@@ -53,6 +53,38 @@ textarea {
   box-shadow: 0 20px 60px rgba(57, 39, 19, 0.08);
 }
 
+.text-muted {
+  color: var(--muted);
+}
+
+.text-foreground {
+  color: var(--foreground);
+}
+
+.text-accent-strong {
+  color: var(--accent-strong);
+}
+
+.border-card {
+  border-color: var(--card-border);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}
+
+.bg-surface {
+  background: var(--surface);
+}
+
+.bg-accent {
+  background: var(--accent);
+}
+
+.bg-muted {
+  background: var(--muted);
+}
+
 .grid-dots {
   background-image: radial-gradient(rgba(31, 31, 26, 0.12) 1px, transparent 1px);
   background-size: 16px 16px;

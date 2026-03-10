@@ -29,9 +29,9 @@ export function ByokModal() {
     <Dialog.Root open={isSettingsOpen} onOpenChange={setSettingsOpen}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/35" />
-        <Dialog.Content className="glass-card fixed left-1/2 top-1/2 w-[min(560px,calc(100%-24px))] -translate-x-1/2 -translate-y-1/2 rounded-[28px] p-8">
+        <Dialog.Content className="glass-card fixed left-1/2 top-1/2 w-[min(560px,calc(100%-24px))] -translate-x-1/2 -translate-y-1/2 rounded-3xl p-8">
           <Dialog.Title className="text-3xl font-semibold">Connect your AI provider</Dialog.Title>
-          <Dialog.Description className="mt-3 text-sm text-[color:var(--muted)]">
+          <Dialog.Description className="mt-3 text-sm text-muted">
             Bring your own OpenRouter key or switch to local Ollama mode. Keys stay in your browser.
           </Dialog.Description>
 
@@ -43,19 +43,19 @@ export function ByokModal() {
                 onChange={(event) => setDraftKey(event.target.value)}
                 disabled={localMode}
                 placeholder="sk-or-v1-..."
-                className="w-full rounded-2xl border border-[color:var(--card-border)] bg-[color:var(--surface)] px-4 py-3 outline-none transition focus:border-[color:var(--accent)]"
+                className="w-full rounded-2xl border border-card bg-surface px-4 py-3 outline-none transition focus:border-orange-600"
               />
             </label>
 
-            <div className="flex items-center justify-between rounded-2xl border border-[color:var(--card-border)] bg-[color:var(--surface)] p-4">
+            <div className="flex items-center justify-between rounded-2xl border border-card bg-surface p-4">
               <div>
                 <p className="font-medium">Local Network (Ollama)</p>
-                <p className="text-sm text-[color:var(--muted)]">Route requests to http://localhost:11434/v1</p>
+                <p className="text-sm text-muted">Route requests to http://localhost:11434/v1</p>
               </div>
               <Switch.Root
                 checked={localMode}
                 onCheckedChange={setLocalMode}
-                className="relative h-7 w-12 rounded-full bg-[color:var(--muted)] data-[state=checked]:bg-[color:var(--accent)]"
+                className="relative h-7 w-12 rounded-full bg-muted data-[state=checked]:bg-orange-600"
               >
                 <Switch.Thumb className="block h-5 w-5 translate-x-1 rounded-full bg-white transition data-[state=checked]:translate-x-6" />
               </Switch.Root>
@@ -67,7 +67,7 @@ export function ByokModal() {
               <button
                 type="button"
                 onClick={() => setSettingsOpen(false)}
-                className="rounded-full border border-[color:var(--card-border)] px-5 py-2.5"
+                className="rounded-full border border-card px-5 py-2.5"
               >
                 Cancel
               </button>
@@ -83,7 +83,7 @@ export function ByokModal() {
                 });
                 setSettingsOpen(false);
               }}
-              className="rounded-full bg-[color:var(--accent)] px-5 py-2.5 text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full bg-accent px-5 py-2.5 text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               Save and continue
             </button>

@@ -7,6 +7,29 @@ type AnalyzeRequest = {
   filename?: string;
 };
 
+export async function uploadAnalysis(file: File) {
+  const { apiKey, baseUrl, provider } = useSettingsStore.getState();
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("base_url", baseUrl);
+  formData.append("model", "openai/gpt-4o-mini");
+  if (provider === "openrouter" && apiKey) {
+    formData.append("api_key", apiKey);
+  }
+
+  const response = await fetch(`${API_URL}/api/v1/analyze/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: "Upload failed." }));
+    throw new Error(error.detail ?? "Upload failed.");
+  }
+
+  return response.json();
+}
+
 export async function fetchAnalyses() {
   const response = await fetch(`${API_URL}/api/v1/analyses`, {
     cache: "no-store",
