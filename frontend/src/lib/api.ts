@@ -1,5 +1,5 @@
 import { useSettingsStore } from "@/stores/settings";
-import type { AnalysisDetail, AnalysisResult, FollowUpEmail } from "@/lib/analysis-types";
+import type { AnalysisDetail, AnalysisListItem, AnalysisResult, FollowUpEmail } from "@/lib/analysis-types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const DEFAULT_MODEL = "google/gemini-3-flash-preview";
@@ -41,7 +41,18 @@ export async function fetchAnalyses() {
     throw new Error("Failed to load analyses.");
   }
 
-  return response.json();
+  return (await response.json()) as AnalysisListItem[];
+}
+
+export async function deleteAnalysis(analysisId: string) {
+  const response = await fetch(`${API_URL}/api/v1/analyze/${analysisId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: "Failed to delete analysis." }));
+    throw new Error(error.detail ?? "Failed to delete analysis.");
+  }
 }
 
 export async function startAnalysis(payload: AnalyzeRequest) {

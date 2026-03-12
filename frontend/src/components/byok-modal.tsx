@@ -9,16 +9,16 @@ import { OLLAMA_BASE_URL, OPENROUTER_BASE_URL, useSettingsStore } from "@/stores
 import { useUiStore } from "@/stores/ui";
 
 export function ByokModal() {
-  const { apiKey, provider, isConfigured, configure } = useSettingsStore();
+  const { apiKey, provider, isConfigured, hasHydrated, configure } = useSettingsStore();
   const { isSettingsOpen, setSettingsOpen } = useUiStore();
   const [draftKey, setDraftKey] = useState(apiKey);
   const [localMode, setLocalMode] = useState(provider === "ollama");
 
   useEffect(() => {
-    if (!isConfigured) {
+    if (hasHydrated && !isConfigured) {
       setSettingsOpen(true);
     }
-  }, [isConfigured, setSettingsOpen]);
+  }, [hasHydrated, isConfigured, setSettingsOpen]);
 
   useEffect(() => {
     setDraftKey(apiKey);

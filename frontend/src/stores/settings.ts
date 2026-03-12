@@ -10,7 +10,9 @@ type SettingsState = {
   baseUrl: string;
   provider: Provider;
   isConfigured: boolean;
+  hasHydrated: boolean;
   configure: (settings: Partial<Pick<SettingsState, "apiKey" | "baseUrl" | "provider">>) => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
 };
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
@@ -23,6 +25,8 @@ export const useSettingsStore = create<SettingsState>()(
       baseUrl: OPENROUTER_BASE_URL,
       provider: "openrouter",
       isConfigured: false,
+      hasHydrated: false,
+      setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       configure: ({ apiKey, baseUrl, provider }) =>
         set((state) => {
           const nextProvider = provider ?? state.provider;
@@ -38,6 +42,15 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: "sales-intelligence-settings",
+      partialize: (state) => ({
+        apiKey: state.apiKey,
+        baseUrl: state.baseUrl,
+        provider: state.provider,
+        isConfigured: state.isConfigured,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );

@@ -1,7 +1,7 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Settings, Sparkles } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { SlidersHorizontal, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,13 +10,16 @@ import { toast } from "sonner";
 import { ByokModal } from "@/components/byok-modal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { fetchAnalyses, startAnalysis, uploadAnalysis } from "@/lib/api";
+import { deleteAnalysis, fetchAnalyses, startAnalysis, uploadAnalysis } from "@/lib/api";
+import type { AnalysisListItem } from "@/lib/analysis-types";
 import { useUiStore } from "@/stores/ui";
 
 export default function HomePage() {
   const [rawText, setRawText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const activeAnalysisId = useUiStore((state) => state.activeAnalysisId);
   const setSettingsOpen = useUiStore((state) => state.setSettingsOpen);
   const setActiveAnalysisId = useUiStore((state) => state.setActiveAnalysisId);
   const analysesQuery = useQuery({ queryKey: ["analyses"], queryFn: fetchAnalyses });
@@ -35,6 +38,19 @@ export default function HomePage() {
     onSuccess: (data) => {
       setActiveAnalysisId(data.analysis_id);
       router.push(`/analysis/${data.analysis_id}`);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+  const deleteMutation = useMutation({
+    mutationFn: deleteAnalysis,
+    onSuccess: async (_, analysisId) => {
+      await queryClient.invalidateQueries({ queryKey: ["analyses"] });
+      toast.success("Analysis deleted.");
+      if (activeAnalysisId === analysisId) {
+        setActiveAnalysisId(null);
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -76,8 +92,15 @@ export default function HomePage() {
             </p>
           </div>
 
-          <Button type="button" onClick={() => setSettingsOpen(true)} variant="outline" size="icon" aria-label="Open settings" className="bg-white/70">
-            <Settings className="h-5 w-5" />
+          <Button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            variant="outline"
+            aria-label="Open settings"
+            className="bg-white/70 px-4 py-2.5"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            Settings
           </Button>
         </div>
 
@@ -147,15 +170,35 @@ export default function HomePage() {
             <div className="mt-4 space-y-3">
               {analysesQuery.isLoading ? <p>Loading...</p> : null}
               {Array.isArray(analysesQuery.data) && analysesQuery.data.length > 0
-                ? analysesQuery.data.map((analysis: { id: string; source_filename?: string; status: string }) => (
-                    <Link
+                ? analysesQuery.data.map((analysis: AnalysisListItem) => (
+                    <div
                       key={analysis.id}
-                      href={`/analysis/${analysis.id}`}
-                      className="block rounded-2xl border border-card bg-white/70 p-4 transition hover:-translate-y-0.5"
+                      className="flex items-start gap-3 rounded-2xl border border-card bg-white/70 p-4 transition hover:-translate-y-0.5"
                     >
-                      <p className="font-medium">{analysis.source_filename ?? "Untitled input"}</p>
-                      <p className="mt-1 text-sm capitalize text-muted">{analysis.status}</p>
-                    </Link>
+                      <Link href={`/analysis/${analysis.id}`} className="min-w-0 flex-1">
+                        <p className="truncate font-medium">{analysis.source_filename ?? "Untitled input"}</p>
+                        <p className="mt-1 text-sm capitalize text-muted">{analysis.status}</p>
+                      </Link>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Delete ${analysis.source_filename ?? "analysis"}`}
+                        className="h-9 w-9 text-muted hover:bg-red-50 hover:text-red-600"
+                        disabled={deleteMutation.isPending}
+                        onClick={() => {
+                          const confirmed = window.confirm(
+                            `Delete ${analysis.source_filename ?? "this analysis"}?`,
+                          );
+
+                          if (confirmed) {
+                            deleteMutation.mutate(analysis.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   ))
                 : null}
               {Array.isArray(analysesQuery.data) && analysesQuery.data.length === 0 ? (

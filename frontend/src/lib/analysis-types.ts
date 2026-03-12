@@ -42,6 +42,14 @@ export type AnalysisDetail = {
   updated_at: string;
 };
 
+export type AnalysisListItem = {
+  id: string;
+  source_filename?: string | null;
+  status: string;
+  status_message: string;
+  created_at: string;
+};
+
 export type FollowUpEmail = {
   subject: string;
   body: string;
