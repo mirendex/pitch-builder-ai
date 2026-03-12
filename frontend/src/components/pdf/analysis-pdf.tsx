@@ -35,30 +35,33 @@ export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: 
       color: "#786c5d",
       lineHeight: 1.5,
     },
-    grid: {
+    section: {
+      marginBottom: 14,
+    },
+    profileGrid: {
       display: "flex",
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: 12,
     },
-    card: {
-      width: "48%",
+    profileItem: {
+      width: "50%",
+      paddingRight: 12,
+      marginBottom: 8,
+    },
+    sectionTitle: {
+      fontSize: 9,
+      letterSpacing: 2,
+      textTransform: "uppercase",
+      color: "#8d3f1d",
+      marginBottom: 8,
+    },
+    blockCard: {
       backgroundColor: "#fffaf2",
       borderWidth: 1,
       borderColor: "#ead9c6",
       borderRadius: 12,
       padding: 14,
-      marginBottom: 12,
-    },
-    cardFull: {
-      width: "100%",
-    },
-    cardTitle: {
-      fontSize: 9,
-      letterSpacing: 2,
-      textTransform: "uppercase",
-      color: "#8d3f1d",
-      marginBottom: 10,
+      marginBottom: 8,
     },
     label: {
       fontSize: 9,
@@ -71,10 +74,14 @@ export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: 
       lineHeight: 1.45,
     },
     itemBox: {
-      marginBottom: 8,
-      paddingBottom: 8,
+      marginBottom: 10,
+      paddingBottom: 10,
       borderBottomWidth: 1,
       borderBottomColor: "#efe4d4",
+    },
+    itemBoxLast: {
+      borderBottomWidth: 0,
+      paddingBottom: 0,
     },
     itemTitle: {
       fontWeight: 700,
@@ -84,6 +91,20 @@ export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: 
       color: "#786c5d",
       fontSize: 9,
       marginTop: 4,
+    },
+    stepRow: {
+      display: "flex",
+      flexDirection: "row",
+      marginBottom: 8,
+    },
+    stepIndex: {
+      width: 18,
+      color: "#8d3f1d",
+      fontWeight: 700,
+    },
+    stepText: {
+      flex: 1,
+      lineHeight: 1.45,
     },
   });
 
@@ -96,66 +117,113 @@ export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: 
           <Text style={styles.subtitle}>Analysis ID: {analysisId}</Text>
         </View>
 
-        <View style={styles.grid}>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Client profile</Text>
-            <Text style={styles.label}>Name</Text>
-            <Text style={styles.value}>{analysis.client_profile.name || "Unknown"}</Text>
-            <Text style={styles.label}>Company</Text>
-            <Text style={styles.value}>{analysis.client_profile.company || "Unknown"}</Text>
-            <Text style={styles.label}>Role</Text>
-            <Text style={styles.value}>{analysis.client_profile.role || "Unknown"}</Text>
-            <Text style={styles.label}>Industry</Text>
-            <Text style={styles.value}>{analysis.client_profile.industry || "Unknown"}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Client profile</Text>
+          <View style={styles.blockCard} wrap={false}>
+            <View style={styles.profileGrid}>
+              <View style={styles.profileItem}>
+                <Text style={styles.label}>Name</Text>
+                <Text style={styles.value}>{analysis.client_profile.name || "Unknown"}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <Text style={styles.label}>Company</Text>
+                <Text style={styles.value}>{analysis.client_profile.company || "Unknown"}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <Text style={styles.label}>Role</Text>
+                <Text style={styles.value}>{analysis.client_profile.role || "Unknown"}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <Text style={styles.label}>Industry</Text>
+                <Text style={styles.value}>{analysis.client_profile.industry || "Unknown"}</Text>
+              </View>
+            </View>
           </View>
+        </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Executive summary</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Executive summary</Text>
+          <View style={styles.blockCard} wrap={false}>
             <Text style={styles.value}>{analysis.executive_summary}</Text>
           </View>
+        </View>
 
-          <View style={[styles.card, styles.cardFull]}>
-            <Text style={styles.cardTitle}>Pain points</Text>
-            {analysis.pain_points.map((point, index) => (
-              <View key={`${point.title}-${index}`} style={styles.itemBox}>
-                <Text style={styles.itemTitle}>{point.title}</Text>
-                <Text>{point.description}</Text>
-                <Text style={styles.itemMeta}>Severity: {point.severity}</Text>
-              </View>
-            ))}
-          </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Pain points</Text>
+          {analysis.pain_points.length === 0 ? (
+            <View style={styles.blockCard} wrap={false}>
+              <Text style={styles.value}>No pain points captured.</Text>
+            </View>
+          ) : null}
+          {analysis.pain_points.map((point, index) => (
+            <View
+              key={`${point.title}-${index}`}
+              style={styles.blockCard}
+              wrap={false}
+            >
+              <Text style={styles.itemTitle}>{point.title}</Text>
+              <Text style={styles.value}>{point.description}</Text>
+              <Text style={styles.itemMeta}>Severity: {point.severity}</Text>
+            </View>
+          ))}
+        </View>
 
-          <View style={[styles.card, styles.cardFull]}>
-            <Text style={styles.cardTitle}>Proposed solutions</Text>
-            {analysis.proposed_solutions.map((solution, index) => (
-              <View key={`${solution.title}-${index}`} style={styles.itemBox}>
-                <Text style={styles.itemTitle}>{solution.title}</Text>
-                <Text>{solution.description}</Text>
-                <Text style={styles.itemMeta}>
-                  Links: {solution.linked_pain_points.join(", ") || "Not mapped"}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Next steps</Text>
-            {analysis.next_steps.map((step, index) => (
-              <Text key={`${step}-${index}`} style={styles.value}>
-                {index + 1}. {step}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Proposed solutions</Text>
+          {analysis.proposed_solutions.length === 0 ? (
+            <View style={styles.blockCard} wrap={false}>
+              <Text style={styles.value}>No solutions captured.</Text>
+            </View>
+          ) : null}
+          {analysis.proposed_solutions.map((solution, index) => (
+            <View
+              key={`${solution.title}-${index}`}
+              style={styles.blockCard}
+              wrap={false}
+            >
+              <Text style={styles.itemTitle}>{solution.title}</Text>
+              <Text style={styles.value}>{solution.description}</Text>
+              <Text style={styles.itemMeta}>
+                Links: {solution.linked_pain_points.join(", ") || "Not mapped"}
               </Text>
-            ))}
-          </View>
+            </View>
+          ))}
+        </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Key metrics</Text>
-            {analysis.key_metrics.map((metric, index) => (
-              <View key={`${metric.label}-${index}`} style={styles.itemBox}>
-                <Text style={styles.label}>{metric.label}</Text>
-                <Text style={styles.itemTitle}>{metric.value}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Next steps</Text>
+          {analysis.next_steps.length === 0 ? (
+            <View style={styles.blockCard} wrap={false}>
+              <Text style={styles.value}>No next steps captured.</Text>
+            </View>
+          ) : null}
+          {analysis.next_steps.map((step, index) => (
+            <View key={`${step}-${index}`} style={styles.blockCard} wrap={false}>
+              <View style={styles.stepRow}>
+                <Text style={styles.stepIndex}>{index + 1}.</Text>
+                <Text style={styles.stepText}>{step}</Text>
               </View>
-            ))}
-          </View>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Key metrics</Text>
+          {analysis.key_metrics.length === 0 ? (
+            <View style={styles.blockCard} wrap={false}>
+              <Text style={styles.value}>No key metrics captured.</Text>
+            </View>
+          ) : null}
+          {analysis.key_metrics.map((metric, index) => (
+            <View
+              key={`${metric.label}-${index}`}
+              style={styles.blockCard}
+              wrap={false}
+            >
+              <Text style={styles.label}>{metric.label}</Text>
+              <Text style={styles.itemTitle}>{metric.value}</Text>
+            </View>
+          ))}
         </View>
       </Page>
     </Document>
