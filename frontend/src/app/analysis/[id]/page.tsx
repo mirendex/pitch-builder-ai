@@ -84,11 +84,11 @@ export default function AnalysisPage() {
 
   if (analysisQuery.isLoading) {
     return (
-      <main className="shell py-10">
-        <div className="glass-card rounded-4xl p-8">
+      <main className="shell py-6 sm:py-8 md:py-10">
+        <div className="glass-card rounded-4xl p-5 sm:p-6 md:p-8">
           <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Processing</p>
-          <h1 className="mt-4 text-4xl font-semibold">{status}</h1>
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <h1 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">{status}</h1>
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="h-36 animate-pulse rounded-3xl bg-white/60" />
             ))}
@@ -107,18 +107,18 @@ export default function AnalysisPage() {
   const result = editedAnalysis ?? data.result_json;
 
   return (
-    <main className="shell py-10">
-      <section className="glass-card rounded-4xl p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <main className="shell py-6 sm:py-8 md:py-10">
+      <section className="glass-card rounded-4xl p-5 sm:p-6 md:p-8">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Live status</p>
-            <h1 className="mt-3 text-4xl font-semibold capitalize">{data.status}</h1>
-            <p className="mt-2 text-muted">{status}</p>
-            <p className="mt-3 text-sm text-muted">
+            <h1 className="mt-3 text-3xl font-semibold capitalize sm:text-4xl">{data.status}</h1>
+            <p className="mt-2 text-sm leading-6 text-muted sm:text-base">{status}</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
               Click directly into any card below to correct wording, numbers, or mappings before export.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
             <button
               type="button"
               onClick={() => {
@@ -127,7 +127,7 @@ export default function AnalysisPage() {
                 }
               }}
               disabled={!result}
-              className="rounded-full border border-card bg-white/80 px-5 py-3 text-sm font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-11 w-full rounded-full border border-card bg-white/80 px-5 py-3 text-sm font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               Download PDF
             </button>
@@ -135,7 +135,7 @@ export default function AnalysisPage() {
               type="button"
               onClick={() => followUpMutation.mutate()}
               disabled={!result || followUpMutation.isPending}
-              className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-11 w-full rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {followUpMutation.isPending ? "Generating..." : "Generate follow-up"}
             </button>
@@ -143,16 +143,16 @@ export default function AnalysisPage() {
         </div>
 
         {followUp ? (
-          <div className="mt-6 rounded-3xl border border-card bg-white/70 p-6">
+          <div className="mt-6 rounded-3xl border border-card bg-white/70 p-4 sm:p-6">
             <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Follow-up email</p>
-            <p className="mt-3 text-lg font-semibold">{followUp.subject}</p>
+            <p className="mt-3 text-base font-semibold sm:text-lg">{followUp.subject}</p>
             <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-foreground">{followUp.body}</p>
           </div>
         ) : null}
       </section>
 
       {result ? (
-        <section className="mt-6 grid gap-6 lg:grid-cols-2">
+        <section className="mt-6 grid gap-5 xl:grid-cols-2 xl:gap-6">
           <ProfileCard profile={result.client_profile} />
           <ExecutiveSummaryCard summary={result.executive_summary} />
           <PainPointsCard painPoints={result.pain_points} />

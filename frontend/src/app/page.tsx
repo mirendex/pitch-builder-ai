@@ -73,20 +73,20 @@ export default function HomePage() {
   });
 
   return (
-    <main className="shell px-0 py-10 md:py-14">
+    <main className="shell px-0 py-6 sm:py-8 md:py-12 lg:py-14">
       <ByokModal />
 
-      <section className="glass-card grid-dots rounded-4xl px-6 py-6 md:px-10 md:py-10">
-        <div className="flex items-start justify-between gap-4">
+      <section className="glass-card grid-dots rounded-[32px] px-4 py-5 sm:rounded-4xl sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-10 lg:py-10">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-card bg-white/60 px-3 py-1 text-xs uppercase tracking-[0.24em] text-accent-strong">
+            <div className="inline-flex items-center gap-2 rounded-full border border-card bg-white/60 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-accent-strong sm:text-xs sm:tracking-[0.24em]">
               <Sparkles className="h-4 w-4" />
               Sales intelligence in under 30 seconds
             </div>
-            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight md:text-6xl">
+            <h1 className="mt-4 max-w-4xl text-3xl font-semibold leading-tight sm:mt-5 sm:text-4xl md:text-5xl lg:text-6xl">
               Turn raw discovery notes into a boardroom-ready sales brief.
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-muted md:text-lg">
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted sm:mt-4 sm:text-base md:text-lg">
               Drop in transcripts, CRM exports, or messy notes. The dashboard extracts pain points,
               executive summaries, next steps, and follow-up emails with transparent live status.
             </p>
@@ -97,30 +97,32 @@ export default function HomePage() {
             onClick={() => setSettingsOpen(true)}
             variant="outline"
             aria-label="Open settings"
-            className="bg-white/70 px-4 py-2.5"
+            className="w-full bg-white/70 sm:w-auto"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Settings
           </Button>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="mt-8 grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] xl:gap-6">
           <div className="space-y-6">
             <div
               {...dropzone.getRootProps()}
-              className="glass-card rounded-3xl border border-dashed border-accent p-6 md:p-8"
+              className="glass-card rounded-[28px] border border-dashed border-accent p-4 sm:p-6 md:p-8"
             >
               <input {...dropzone.getInputProps()} />
               <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
                 Drop files here
               </p>
-              <h2 className="mt-3 text-2xl font-semibold">Massive drag-and-drop zone for raw sales materials</h2>
-              <p className="mt-3 max-w-xl text-sm text-muted">
+              <h2 className="mt-3 text-xl font-semibold leading-tight sm:text-2xl">
+                Massive drag-and-drop zone for raw sales materials
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
                 Supports .txt, .docx, .csv, and .pdf. The backend parser routes each file type to the
                 right extraction service before the AI pipeline runs.
               </p>
-              <div className="mt-4 flex items-center justify-between gap-4">
-                <p className="text-sm text-muted">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm leading-6 text-muted">
                   {selectedFile ? `Selected: ${selectedFile.name}` : "Click or drag one file into this zone."}
                 </p>
                 <Button
@@ -132,13 +134,14 @@ export default function HomePage() {
                     }
                   }}
                   disabled={!selectedFile || uploadMutation.isPending}
+                  className="w-full sm:w-auto"
                 >
                   {uploadMutation.isPending ? "Uploading..." : "Analyze file"}
                 </Button>
               </div>
             </div>
 
-            <div className="glass-card rounded-3xl border border-dashed border-accent p-6 md:p-8">
+            <div className="glass-card rounded-[28px] border border-dashed border-accent p-4 sm:p-6 md:p-8">
               <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
                 Paste anything
               </p>
@@ -146,16 +149,17 @@ export default function HomePage() {
                 value={rawText}
                 onChange={(event) => setRawText(event.target.value)}
                 placeholder="Paste discovery call transcripts, CRM notes, or rough talking points."
-                className="mt-4 min-h-65 bg-surface p-5"
+                className="mt-4 min-h-52 bg-surface p-4 sm:min-h-65 sm:p-5"
               />
-              <div className="mt-4 flex items-center justify-between gap-4">
-                <p className="text-sm text-muted">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm leading-6 text-muted">
                   Pasted input goes straight into the analysis pipeline without any upload step.
                 </p>
                 <Button
                   type="button"
                   onClick={() => analyzeMutation.mutate({ rawText, filename: "pasted-input.txt" })}
                   disabled={!rawText.trim() || analyzeMutation.isPending}
+                  className="w-full sm:w-auto"
                 >
                   {analyzeMutation.isPending ? "Starting..." : "Analyze"}
                 </Button>
@@ -163,7 +167,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <aside className="glass-card rounded-3xl p-6 md:p-8">
+          <aside className="glass-card rounded-[28px] p-4 sm:p-6 md:p-8">
             <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
               Recent analyses
             </p>

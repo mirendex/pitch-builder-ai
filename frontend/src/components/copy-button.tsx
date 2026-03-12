@@ -26,6 +26,8 @@ export function CopyButton({ plainText, markdown }: CopyButtonProps) {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
+          align="end"
+          collisionPadding={12}
           sideOffset={8}
           className="glass-card z-50 min-w-40 rounded-2xl p-2 shadow-xl"
         >

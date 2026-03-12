@@ -30,14 +30,14 @@ export function ByokModal() {
   return (
     <Dialog.Root open={isSettingsOpen} onOpenChange={setSettingsOpen}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/35" />
-        <Dialog.Content className="glass-card fixed left-1/2 top-1/2 w-[min(560px,calc(100%-24px))] -translate-x-1/2 -translate-y-1/2 rounded-3xl p-8">
-          <Dialog.Title className="text-3xl font-semibold">Connect your AI provider</Dialog.Title>
-          <Dialog.Description className="mt-3 text-sm text-muted">
+        <Dialog.Overlay className="fixed inset-0 bg-black/35 backdrop-blur-[2px]" />
+        <Dialog.Content className="glass-card fixed left-1/2 top-1/2 max-h-[min(680px,calc(100vh-24px))] w-[min(560px,calc(100%-24px))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[28px] p-5 sm:rounded-3xl sm:p-8">
+          <Dialog.Title className="text-2xl font-semibold sm:text-3xl">Connect your AI provider</Dialog.Title>
+          <Dialog.Description className="mt-3 text-sm leading-6 text-muted">
             Bring your own OpenRouter key or switch to local Ollama mode. Keys stay in your browser.
           </Dialog.Description>
 
-          <div className="mt-8 space-y-6">
+          <div className="mt-6 space-y-5 sm:mt-8 sm:space-y-6">
             <label className="block space-y-2">
               <span className="text-sm font-medium">OpenRouter API key</span>
               <Input
@@ -49,8 +49,8 @@ export function ByokModal() {
               />
             </label>
 
-            <div className="flex items-center justify-between rounded-2xl border border-card bg-surface p-4">
-              <div>
+            <div className="flex flex-col gap-4 rounded-2xl border border-card bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="pr-2">
                 <p className="font-medium">Local Network (Ollama)</p>
                 <p className="text-sm text-muted">Route requests to http://localhost:11434/v1</p>
               </div>
@@ -64,13 +64,13 @@ export function ByokModal() {
             </div>
           </div>
 
-          <div className="mt-8 flex justify-end gap-3">
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:mt-8 sm:flex-row sm:justify-end">
             {isConfigured ? (
               <Button
                 type="button"
                 onClick={() => setSettingsOpen(false)}
                 variant="outline"
-                className="px-5 py-2.5"
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
@@ -86,7 +86,7 @@ export function ByokModal() {
                 });
                 setSettingsOpen(false);
               }}
-              className="px-5 py-2.5"
+              className="w-full sm:w-auto"
             >
               Save and continue
             </Button>

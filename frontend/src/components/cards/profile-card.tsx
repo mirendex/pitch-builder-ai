@@ -28,8 +28,8 @@ export function ProfileCard({ profile }: { profile: Profile }) {
   ].join("\n");
 
   return (
-    <article className="glass-card rounded-[28px] p-6">
-      <div className="flex items-center justify-between gap-3">
+    <article className="glass-card rounded-[28px] p-4 sm:p-6">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Client profile</p>
         <CopyButton plainText={plainText} markdown={markdown} />
       </div>
@@ -46,7 +46,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
               value={profile[field] ?? ""}
               onChange={(event) => updateProfileField(field, event.target.value)}
               placeholder={`Add ${label.toLowerCase()}`}
-              className="w-full rounded-2xl border border-card bg-white/70 px-4 py-3 text-sm text-foreground outline-none focus:border-orange-600"
+              className="min-h-11 w-full rounded-2xl border border-card bg-white/70 px-4 py-3 text-sm text-foreground outline-none focus:border-orange-600"
             />
           </label>
         ))}
