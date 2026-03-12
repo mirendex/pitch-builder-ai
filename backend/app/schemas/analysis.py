@@ -6,6 +6,9 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 
+DEFAULT_MODEL = "google/gemini-3-flash-preview"
+
+
 class ClientProfile(BaseModel):
     name: str | None = None
     company: str | None = None
@@ -51,14 +54,14 @@ class AnalyzeRequest(BaseModel):
     source_filename: str | None = None
     api_key: str | None = None
     base_url: str
-    model: str = "openai/gpt-4o-mini"
+    model: str = DEFAULT_MODEL
 
 
 class GenerateEmailRequest(BaseModel):
     analysis_id: str
     api_key: str | None = None
     base_url: str
-    model: str = "openai/gpt-4o-mini"
+    model: str = DEFAULT_MODEL
     analysis_result: AnalysisResult | None = None
 
 

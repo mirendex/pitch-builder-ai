@@ -10,7 +10,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from app.db.models import Analysis, AnalysisStatus
 from app.db.session import AsyncSessionLocal, get_session
-from app.schemas.analysis import AnalyzeRequest, AnalysisDetail, AnalysisListItem
+from app.schemas.analysis import DEFAULT_MODEL, AnalyzeRequest, AnalysisDetail, AnalysisListItem
 from app.services.parsers import UnsupportedFileTypeError, detect_and_parse
 from app.services.pipeline import create_status_channel, remove_status_channel, run_analysis
 from app.services.token_counter import TokenLimitExceededError, check_within_limit
@@ -108,7 +108,7 @@ async def upload_analysis(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     base_url: str = Form(...),
-    model: str = Form("openai/gpt-4o-mini"),
+    model: str = Form(DEFAULT_MODEL),
     api_key: str | None = Form(default=None),
     session: AsyncSession = Depends(get_session),
 ) -> dict[str, str]:

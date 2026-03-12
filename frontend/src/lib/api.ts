@@ -2,6 +2,7 @@ import { useSettingsStore } from "@/stores/settings";
 import type { AnalysisDetail, AnalysisResult, FollowUpEmail } from "@/lib/analysis-types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const DEFAULT_MODEL = "google/gemini-3-flash-preview";
 
 type AnalyzeRequest = {
   rawText?: string;
@@ -13,7 +14,7 @@ export async function uploadAnalysis(file: File) {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("base_url", baseUrl);
-  formData.append("model", "openai/gpt-4o-mini");
+  formData.append("model", DEFAULT_MODEL);
   if (provider === "openrouter" && apiKey) {
     formData.append("api_key", apiKey);
   }

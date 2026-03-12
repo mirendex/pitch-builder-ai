@@ -245,7 +245,7 @@ def test_upload_analysis_accepts_supported_file(client: TestClient, mocker) -> N
 
     response = client.post(
         "/api/v1/analyze/upload",
-        data={"base_url": "http://localhost:11434/v1", "model": "openai/gpt-4o-mini"},
+        data={"base_url": "http://localhost:11434/v1", "model": "google/gemini-3-flash-preview"},
         files={"file": ("notes.txt", b"hello", "text/plain")},
     )
 
@@ -266,7 +266,7 @@ def test_upload_analysis_rejects_unsupported_file(client: TestClient, mocker) ->
 
     response = client.post(
         "/api/v1/analyze/upload",
-        data={"base_url": "http://localhost:11434/v1", "model": "openai/gpt-4o-mini"},
+        data={"base_url": "http://localhost:11434/v1", "model": "google/gemini-3-flash-preview"},
         files={"file": ("notes.exe", b"binary", "application/octet-stream")},
     )
 
@@ -284,7 +284,7 @@ def test_upload_analysis_rejects_token_limit(client: TestClient, mocker) -> None
 
     response = client.post(
         "/api/v1/analyze/upload",
-        data={"base_url": "http://localhost:11434/v1", "model": "openai/gpt-4o-mini"},
+        data={"base_url": "http://localhost:11434/v1", "model": "google/gemini-3-flash-preview"},
         files={"file": ("notes.txt", b"hello", "text/plain")},
     )
 
