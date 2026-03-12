@@ -1,3 +1,5 @@
+import pytest
+
 from app.schemas.analysis import AnalysisResult, FollowUpEmail
 from app.services.pipeline import generate_follow_up_email
 
@@ -43,6 +45,7 @@ def build_analysis_result() -> AnalysisResult:
     )
 
 
+@pytest.mark.asyncio
 async def test_generate_follow_up_email_recovers_from_invalid_json(mocker) -> None:
     fake_client = FakeClient()
     mocker.patch("app.services.pipeline.LlmClient", return_value=fake_client)

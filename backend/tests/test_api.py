@@ -14,6 +14,8 @@ from app.api.v1.generate import router as generate_router
 from app.db.models import Analysis, AnalysisStatus, Base
 from app.db.session import get_session
 from app.schemas.analysis import FollowUpEmail
+from app.services.parsers import UnsupportedFileTypeError
+from app.services.token_counter import TokenLimitExceededError
 
 
 @pytest.fixture
@@ -166,3 +168,75 @@ def test_generate_follow_up_uses_payload_override(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json()["subject"] == "Quick follow-up"
+
+
+def test_create_analysis_rejects_token_limit(client: TestClient, mocker) -> None:
+    mocker.patch.object(
+        analyze_module,
+        "check_within_limit",
+        side_effect=TokenLimitExceededError("Input is too large for the selected model."),
+    )
+
+    response = client.post(
+        "/api/v1/analyze",
+        json={
+            "raw_text": "Discovery call transcript",
+            "source_filename": "notes.txt",
+            "base_url": "http://localhost:11434/v1",
+        },
+    )
+
+    assert response.status_code == 400
+    assert "too large" in response.json()["detail"]
+
+
+def test_upload_analysis_accepts_supported_file(client: TestClient, mocker) -> None:
+    mocker.patch.object(analyze_module, "detect_and_parse", return_value="Parsed upload content")
+
+    response = client.post(
+        "/api/v1/analyze/upload",
+        data={"base_url": "http://localhost:11434/v1", "model": "openai/gpt-4o-mini"},
+        files={"file": ("notes.txt", b"hello", "text/plain")},
+    )
+
+    assert response.status_code == 202
+    analysis_id = response.json()["analysis_id"]
+
+    detail_response = client.get(f"/api/v1/analyze/{analysis_id}")
+    assert detail_response.status_code == 200
+    assert detail_response.json()["status"] == "done"
+
+
+def test_upload_analysis_rejects_unsupported_file(client: TestClient, mocker) -> None:
+    mocker.patch.object(
+        analyze_module,
+        "detect_and_parse",
+        side_effect=UnsupportedFileTypeError("Unsupported file type: notes.exe"),
+    )
+
+    response = client.post(
+        "/api/v1/analyze/upload",
+        data={"base_url": "http://localhost:11434/v1", "model": "openai/gpt-4o-mini"},
+        files={"file": ("notes.exe", b"binary", "application/octet-stream")},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Unsupported file type: notes.exe"
+
+
+def test_upload_analysis_rejects_token_limit(client: TestClient, mocker) -> None:
+    mocker.patch.object(analyze_module, "detect_and_parse", return_value="Parsed upload content")
+    mocker.patch.object(
+        analyze_module,
+        "check_within_limit",
+        side_effect=TokenLimitExceededError("Input is too large for the selected model."),
+    )
+
+    response = client.post(
+        "/api/v1/analyze/upload",
+        data={"base_url": "http://localhost:11434/v1", "model": "openai/gpt-4o-mini"},
+        files={"file": ("notes.txt", b"hello", "text/plain")},
+    )
+
+    assert response.status_code == 400
+    assert "too large" in response.json()["detail"]
