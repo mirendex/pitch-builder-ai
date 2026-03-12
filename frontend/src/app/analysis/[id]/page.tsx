@@ -56,19 +56,30 @@ export default function AnalysisPage() {
   }, [analysisQuery.data?.result_json, initializeEditedAnalysis]);
 
   useEffect(() => {
+    if (analysisQuery.data?.status_message) {
+      setStatus(analysisQuery.data.status_message);
+    }
+  }, [analysisQuery.data?.status_message]);
+
+  useEffect(() => {
     const stream = subscribeToStream(analysisId);
-    stream.onmessage = (event) => {
+    const handleStatusEvent = (event: MessageEvent<string>) => {
       const payload = JSON.parse(event.data) as { status?: string };
       if (payload.status) {
         setStatus(payload.status);
       }
     };
 
+    stream.addEventListener("status", handleStatusEvent);
+
     stream.onerror = () => {
       stream.close();
     };
 
-    return () => stream.close();
+    return () => {
+      stream.removeEventListener("status", handleStatusEvent);
+      stream.close();
+    };
   }, [analysisId]);
 
   if (analysisQuery.isLoading) {

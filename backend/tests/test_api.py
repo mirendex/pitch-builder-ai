@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+from collections.abc import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
@@ -115,6 +116,55 @@ def test_create_and_fetch_analysis(client: TestClient) -> None:
     assert detail_response.status_code == 200
     assert detail_response.json()["status"] == "done"
     assert detail_response.json()["result_json"]["client_profile"]["company"] == "Northstar Logistics"
+
+
+def test_stream_analysis_returns_status_events(client: TestClient) -> None:
+    create_response = client.post(
+        "/api/v1/analyze",
+        json={
+            "raw_text": "Discovery call transcript",
+            "source_filename": "notes.txt",
+            "base_url": "http://localhost:11434/v1",
+        },
+    )
+
+    analysis_id = create_response.json()["analysis_id"]
+    stream_response = client.get(f"/api/v1/analyze/{analysis_id}/stream")
+
+    assert stream_response.status_code == 200
+    assert "Complete" in stream_response.text
+
+
+def test_delete_analysis_removes_record(client: TestClient) -> None:
+    create_response = client.post(
+        "/api/v1/analyze",
+        json={
+            "raw_text": "Discovery call transcript",
+            "source_filename": "notes.txt",
+            "base_url": "http://localhost:11434/v1",
+        },
+    )
+
+    analysis_id = create_response.json()["analysis_id"]
+    delete_response = client.delete(f"/api/v1/analyze/{analysis_id}")
+
+    assert delete_response.status_code == 204
+
+    fetch_response = client.get(f"/api/v1/analyze/{analysis_id}")
+    assert fetch_response.status_code == 404
+
+
+def test_create_analysis_requires_raw_text(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/analyze",
+        json={
+            "source_filename": "notes.txt",
+            "base_url": "http://localhost:11434/v1",
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "raw_text is required."
 
 
 def test_generate_follow_up_uses_payload_override(client: TestClient) -> None:

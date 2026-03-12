@@ -3,6 +3,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Switch from "@radix-ui/react-switch";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { OLLAMA_BASE_URL, OPENROUTER_BASE_URL, useSettingsStore } from "@/stores/settings";
 import { useUiStore } from "@/stores/ui";
 
@@ -38,12 +40,12 @@ export function ByokModal() {
           <div className="mt-8 space-y-6">
             <label className="block space-y-2">
               <span className="text-sm font-medium">OpenRouter API key</span>
-              <input
+              <Input
                 value={draftKey}
                 onChange={(event) => setDraftKey(event.target.value)}
                 disabled={localMode}
                 placeholder="sk-or-v1-..."
-                className="w-full rounded-2xl border border-card bg-surface px-4 py-3 outline-none transition focus:border-orange-600"
+                className="bg-surface"
               />
             </label>
 
@@ -64,15 +66,16 @@ export function ByokModal() {
 
           <div className="mt-8 flex justify-end gap-3">
             {isConfigured ? (
-              <button
+              <Button
                 type="button"
                 onClick={() => setSettingsOpen(false)}
-                className="rounded-full border border-card px-5 py-2.5"
+                variant="outline"
+                className="px-5 py-2.5"
               >
                 Cancel
-              </button>
+              </Button>
             ) : null}
-            <button
+            <Button
               type="button"
               disabled={!canSave}
               onClick={() => {
@@ -83,10 +86,10 @@ export function ByokModal() {
                 });
                 setSettingsOpen(false);
               }}
-              className="rounded-full bg-accent px-5 py-2.5 text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="px-5 py-2.5"
             >
               Save and continue
-            </button>
+            </Button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

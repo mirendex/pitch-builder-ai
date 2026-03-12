@@ -3,6 +3,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 type CopyButtonProps = {
   plainText: string;
@@ -18,13 +19,10 @@ export function CopyButton({ plainText, markdown }: CopyButtonProps) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-card bg-white/70 px-3 py-2 text-sm"
-        >
+        <Button type="button" variant="outline" size="sm" className="bg-white/70 px-3 py-2">
           <Copy className="h-4 w-4" />
           Copy
-        </button>
+        </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content

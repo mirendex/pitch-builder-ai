@@ -6,6 +6,7 @@
     "clean": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path .next) { Remove-Item .next -Recurse -Force }\"",
     "dev": "next dev",
     "build": "next build",
+    "build:isolated": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:NEXT_DIST_DIR='.next-build'; npm run build\"",
     "start": "next start",
     "lint": "eslint src next.config.ts eslint.config.mjs prettier.config.mjs",
     "format": "prettier --write .",

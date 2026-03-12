@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { ByokModal } from "@/components/byok-modal";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { fetchAnalyses, startAnalysis, uploadAnalysis } from "@/lib/api";
 import { useUiStore } from "@/stores/ui";
 
@@ -74,14 +76,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="rounded-full border border-card bg-white/70 p-3"
-            aria-label="Open settings"
-          >
+          <Button type="button" onClick={() => setSettingsOpen(true)} variant="outline" size="icon" aria-label="Open settings" className="bg-white/70">
             <Settings className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
@@ -103,7 +100,7 @@ export default function HomePage() {
                 <p className="text-sm text-muted">
                   {selectedFile ? `Selected: ${selectedFile.name}` : "Click or drag one file into this zone."}
                 </p>
-                <button
+                <Button
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation();
@@ -112,10 +109,9 @@ export default function HomePage() {
                     }
                   }}
                   disabled={!selectedFile || uploadMutation.isPending}
-                  className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {uploadMutation.isPending ? "Uploading..." : "Analyze file"}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -123,24 +119,23 @@ export default function HomePage() {
               <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
                 Paste anything
               </p>
-              <textarea
+              <Textarea
                 value={rawText}
                 onChange={(event) => setRawText(event.target.value)}
                 placeholder="Paste discovery call transcripts, CRM notes, or rough talking points."
-                className="mt-4 min-h-65 w-full resize-none rounded-3xl border border-card bg-surface p-5 outline-none focus:border-orange-600"
+                className="mt-4 min-h-65 bg-surface p-5"
               />
               <div className="mt-4 flex items-center justify-between gap-4">
                 <p className="text-sm text-muted">
                   Pasted input goes straight into the analysis pipeline without any upload step.
                 </p>
-                <button
+                <Button
                   type="button"
                   onClick={() => analyzeMutation.mutate({ rawText, filename: "pasted-input.txt" })}
                   disabled={!rawText.trim() || analyzeMutation.isPending}
-                  className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {analyzeMutation.isPending ? "Starting..." : "Analyze"}
-                </button>
+                </Button>
               </div>
             </div>
           </div>
