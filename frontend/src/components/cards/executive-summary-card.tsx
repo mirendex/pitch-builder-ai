@@ -6,13 +6,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { useUiStore } from "@/stores/ui";
 
 export function ExecutiveSummaryCard({ summary }: { summary: string }) {
-  const updateExecutiveSummary = useUiStore((state) => state.updateExecutiveSummary);
+  const updateExecutiveSummary = useUiStore(
+    (state) => state.updateExecutiveSummary,
+  );
 
   return (
     <Card className="p-4 sm:p-6">
       <CardHeader>
-        <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Executive summary</p>
-        <CopyButton plainText={summary} markdown={`## Executive Summary\n${summary}`} />
+        <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
+          Executive summary
+        </p>
+        <CopyButton
+          plainText={summary}
+          markdown={`## Executive Summary\n${summary}`}
+        />
       </CardHeader>
       <CardContent>
         <Textarea

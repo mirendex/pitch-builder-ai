@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,14 +11,15 @@ from app.db.session import get_session
 from app.schemas.analysis import AnalysisResult, FollowUpEmail, GenerateEmailRequest
 from app.services.pipeline import generate_follow_up_email
 
-
 router = APIRouter(prefix="/api/v1", tags=["email"])
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
 @router.post("/generate-email", response_model=FollowUpEmail)
 async def create_follow_up_email(
     payload: GenerateEmailRequest,
-    session: AsyncSession = Depends(get_session),
+    session: SessionDep,
 ) -> FollowUpEmail:
     analysis = await session.get(Analysis, payload.analysis_id)
     if analysis is None or not analysis.result_json:
@@ -26,7 +28,9 @@ async def create_follow_up_email(
             detail="Completed analysis not found.",
         )
 
-    analysis_result = payload.analysis_result or AnalysisResult.model_validate(json.loads(analysis.result_json))
+    analysis_result = payload.analysis_result or AnalysisResult.model_validate(
+        json.loads(analysis.result_json)
+    )
     try:
         return await generate_follow_up_email(
             analysis_result=analysis_result,

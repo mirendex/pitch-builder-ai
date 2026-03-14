@@ -11,7 +11,11 @@ from tenacity import AsyncRetrying, retry_if_exception_type, stop_after_attempt,
 from app.db.models import Analysis, AnalysisStatus
 from app.schemas.analysis import AnalysisResult, FollowUpEmail
 from app.services.llm_client import LlmClient
-from app.services.prompts import build_email_prompt, build_extraction_prompt, build_json_repair_prompt
+from app.services.prompts import (
+    build_email_prompt,
+    build_extraction_prompt,
+    build_json_repair_prompt,
+)
 
 
 class JsonRepairRequiredError(ValueError):

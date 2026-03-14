@@ -1,5 +1,10 @@
 import { useSettingsStore } from "@/stores/settings";
-import type { AnalysisDetail, AnalysisListItem, AnalysisResult, FollowUpEmail } from "@/lib/analysis-types";
+import type {
+  AnalysisDetail,
+  AnalysisListItem,
+  AnalysisResult,
+  FollowUpEmail,
+} from "@/lib/analysis-types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const DEFAULT_MODEL = "google/gemini-3-flash-preview";
@@ -25,7 +30,9 @@ export async function uploadAnalysis(file: File) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Upload failed." }));
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Upload failed." }));
     throw new Error(error.detail ?? "Upload failed.");
   }
 
@@ -50,7 +57,9 @@ export async function deleteAnalysis(analysisId: string) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Failed to delete analysis." }));
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Failed to delete analysis." }));
     throw new Error(error.detail ?? "Failed to delete analysis.");
   }
 }
@@ -71,7 +80,9 @@ export async function startAnalysis(payload: AnalyzeRequest) {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Analysis failed." }));
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Analysis failed." }));
     throw new Error(error.detail ?? "Analysis failed.");
   }
 
@@ -90,7 +101,10 @@ export async function fetchAnalysisById(analysisId: string) {
   return (await response.json()) as AnalysisDetail;
 }
 
-export async function generateFollowUp(analysisId: string, analysisResult?: AnalysisResult | null) {
+export async function generateFollowUp(
+  analysisId: string,
+  analysisResult?: AnalysisResult | null,
+) {
   const { apiKey, baseUrl, provider } = useSettingsStore.getState();
   const response = await fetch(`${API_URL}/api/v1/generate-email`, {
     method: "POST",
@@ -106,7 +120,9 @@ export async function generateFollowUp(analysisId: string, analysisResult?: Anal
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Failed to generate follow-up." }));
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Failed to generate follow-up." }));
     throw new Error(error.detail ?? "Failed to generate follow-up.");
   }
 

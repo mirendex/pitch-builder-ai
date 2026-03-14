@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import tiktoken
 
-
 DEFAULT_MODEL_TOKEN_LIMIT = 128_000
 
 
@@ -23,6 +22,7 @@ def check_within_limit(text: str, model: str, max_tokens: int = DEFAULT_MODEL_TO
     total_tokens = count_tokens(text, model)
     if total_tokens > max_tokens:
         raise TokenLimitExceededError(
-            f"Input is too large for the selected model. Estimated {total_tokens} tokens, limit is {max_tokens}."
+            "Input is too large for the selected model. "
+            f"Estimated {total_tokens} tokens, limit is {max_tokens}."
         )
     return total_tokens

@@ -2,8 +2,12 @@
 
 import type { AnalysisResult } from "@/lib/analysis-types";
 
-export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: string) {
-  const { Document, Page, StyleSheet, Text, View, pdf } = await import("@react-pdf/renderer");
+export async function downloadAnalysisPdf(
+  analysis: AnalysisResult,
+  analysisId: string,
+) {
+  const { Document, Page, StyleSheet, Text, View, pdf } =
+    await import("@react-pdf/renderer");
 
   const styles = StyleSheet.create({
     page: {
@@ -123,19 +127,27 @@ export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: 
             <View style={styles.profileGrid}>
               <View style={styles.profileItem}>
                 <Text style={styles.label}>Name</Text>
-                <Text style={styles.value}>{analysis.client_profile.name || "Unknown"}</Text>
+                <Text style={styles.value}>
+                  {analysis.client_profile.name || "Unknown"}
+                </Text>
               </View>
               <View style={styles.profileItem}>
                 <Text style={styles.label}>Company</Text>
-                <Text style={styles.value}>{analysis.client_profile.company || "Unknown"}</Text>
+                <Text style={styles.value}>
+                  {analysis.client_profile.company || "Unknown"}
+                </Text>
               </View>
               <View style={styles.profileItem}>
                 <Text style={styles.label}>Role</Text>
-                <Text style={styles.value}>{analysis.client_profile.role || "Unknown"}</Text>
+                <Text style={styles.value}>
+                  {analysis.client_profile.role || "Unknown"}
+                </Text>
               </View>
               <View style={styles.profileItem}>
                 <Text style={styles.label}>Industry</Text>
-                <Text style={styles.value}>{analysis.client_profile.industry || "Unknown"}</Text>
+                <Text style={styles.value}>
+                  {analysis.client_profile.industry || "Unknown"}
+                </Text>
               </View>
             </View>
           </View>
@@ -198,7 +210,11 @@ export async function downloadAnalysisPdf(analysis: AnalysisResult, analysisId: 
             </View>
           ) : null}
           {analysis.next_steps.map((step, index) => (
-            <View key={`${step}-${index}`} style={styles.blockCard} wrap={false}>
+            <View
+              key={`${step}-${index}`}
+              style={styles.blockCard}
+              wrap={false}
+            >
               <View style={styles.stepRow}>
                 <Text style={styles.stepIndex}>{index + 1}.</Text>
                 <Text style={styles.stepText}>{step}</Text>

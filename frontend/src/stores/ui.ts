@@ -1,7 +1,12 @@
 "use client";
 
 import { create } from "zustand";
-import type { AnalysisResult, KeyMetric, PainPoint, ProposedSolution } from "@/lib/analysis-types";
+import type {
+  AnalysisResult,
+  KeyMetric,
+  PainPoint,
+  ProposedSolution,
+} from "@/lib/analysis-types";
 
 type UiState = {
   isSettingsOpen: boolean;
@@ -12,9 +17,20 @@ type UiState = {
   initializeEditedAnalysis: (analysis: AnalysisResult) => void;
   resetEditedAnalysis: () => void;
   updateExecutiveSummary: (summary: string) => void;
-  updateProfileField: (field: keyof AnalysisResult["client_profile"], value: string) => void;
-  updatePainPoint: (index: number, field: keyof PainPoint, value: string) => void;
-  updateSolution: (index: number, field: keyof ProposedSolution, value: string | string[]) => void;
+  updateProfileField: (
+    field: keyof AnalysisResult["client_profile"],
+    value: string,
+  ) => void;
+  updatePainPoint: (
+    index: number,
+    field: keyof PainPoint,
+    value: string,
+  ) => void;
+  updateSolution: (
+    index: number,
+    field: keyof ProposedSolution,
+    value: string | string[],
+  ) => void;
   updateNextStep: (index: number, value: string) => void;
   updateMetric: (index: number, field: keyof KeyMetric, value: string) => void;
 };
@@ -62,8 +78,9 @@ export const useUiStore = create<UiState>((set) => ({
       editedAnalysis: state.editedAnalysis
         ? {
             ...state.editedAnalysis,
-            pain_points: state.editedAnalysis.pain_points.map((point, pointIndex) =>
-              pointIndex === index ? { ...point, [field]: value } : point,
+            pain_points: state.editedAnalysis.pain_points.map(
+              (point, pointIndex) =>
+                pointIndex === index ? { ...point, [field]: value } : point,
             ),
           }
         : null,
@@ -73,8 +90,11 @@ export const useUiStore = create<UiState>((set) => ({
       editedAnalysis: state.editedAnalysis
         ? {
             ...state.editedAnalysis,
-            proposed_solutions: state.editedAnalysis.proposed_solutions.map((solution, solutionIndex) =>
-              solutionIndex === index ? { ...solution, [field]: value } : solution,
+            proposed_solutions: state.editedAnalysis.proposed_solutions.map(
+              (solution, solutionIndex) =>
+                solutionIndex === index
+                  ? { ...solution, [field]: value }
+                  : solution,
             ),
           }
         : null,
@@ -84,8 +104,8 @@ export const useUiStore = create<UiState>((set) => ({
       editedAnalysis: state.editedAnalysis
         ? {
             ...state.editedAnalysis,
-            next_steps: state.editedAnalysis.next_steps.map((step, stepIndex) =>
-              stepIndex === index ? value : step,
+            next_steps: state.editedAnalysis.next_steps.map(
+              (step, stepIndex) => (stepIndex === index ? value : step),
             ),
           }
         : null,
@@ -95,8 +115,9 @@ export const useUiStore = create<UiState>((set) => ({
       editedAnalysis: state.editedAnalysis
         ? {
             ...state.editedAnalysis,
-            key_metrics: state.editedAnalysis.key_metrics.map((metric, metricIndex) =>
-              metricIndex === index ? { ...metric, [field]: value } : metric,
+            key_metrics: state.editedAnalysis.key_metrics.map(
+              (metric, metricIndex) =>
+                metricIndex === index ? { ...metric, [field]: value } : metric,
             ),
           }
         : null,

@@ -12,7 +12,11 @@ import { NextStepsCard } from "@/components/cards/next-steps-card";
 import { PainPointsCard } from "@/components/cards/pain-points-card";
 import { ProfileCard } from "@/components/cards/profile-card";
 import { SolutionsCard } from "@/components/cards/solutions-card";
-import { fetchAnalysisById, generateFollowUp, subscribeToStream } from "@/lib/api";
+import {
+  fetchAnalysisById,
+  generateFollowUp,
+  subscribeToStream,
+} from "@/lib/api";
 import { useUiStore } from "@/stores/ui";
 
 export default function AnalysisPage() {
@@ -23,12 +27,15 @@ export default function AnalysisPage() {
   const editedAnalysis = useUiStore((state) => state.editedAnalysis);
   const activeAnalysisId = useUiStore((state) => state.activeAnalysisId);
   const setActiveAnalysisId = useUiStore((state) => state.setActiveAnalysisId);
-  const initializeEditedAnalysis = useUiStore((state) => state.initializeEditedAnalysis);
+  const initializeEditedAnalysis = useUiStore(
+    (state) => state.initializeEditedAnalysis,
+  );
   const resetEditedAnalysis = useUiStore((state) => state.resetEditedAnalysis);
   const analysisQuery = useQuery({
     queryKey: ["analysis", analysisId],
     queryFn: () => fetchAnalysisById(analysisId),
-    refetchInterval: (query) => (query.state.data?.status === "done" ? false : 3_000),
+    refetchInterval: (query) =>
+      query.state.data?.status === "done" ? false : 3_000,
   });
   const followUpMutation = useMutation({
     mutationFn: () => generateFollowUp(analysisId, editedAnalysis),
@@ -86,11 +93,18 @@ export default function AnalysisPage() {
     return (
       <main className="shell py-6 sm:py-8 md:py-10">
         <div className="glass-card rounded-4xl p-5 sm:p-6 md:p-8">
-          <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Processing</p>
-          <h1 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">{status}</h1>
+          <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
+            Processing
+          </p>
+          <h1 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">
+            {status}
+          </h1>
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="h-36 animate-pulse rounded-3xl bg-white/60" />
+              <div
+                key={index}
+                className="h-36 animate-pulse rounded-3xl bg-white/60"
+              />
             ))}
           </div>
         </div>
@@ -111,11 +125,18 @@ export default function AnalysisPage() {
       <section className="glass-card rounded-4xl p-5 sm:p-6 md:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Live status</p>
-            <h1 className="mt-3 text-3xl font-semibold capitalize sm:text-4xl">{data.status}</h1>
-            <p className="mt-2 text-sm leading-6 text-muted sm:text-base">{status}</p>
+            <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
+              Live status
+            </p>
+            <h1 className="mt-3 text-3xl font-semibold capitalize sm:text-4xl">
+              {data.status}
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-muted sm:text-base">
+              {status}
+            </p>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
-              Click directly into any card below to correct wording, numbers, or mappings before export.
+              Click directly into any card below to correct wording, numbers, or
+              mappings before export.
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
@@ -137,16 +158,24 @@ export default function AnalysisPage() {
               disabled={!result || followUpMutation.isPending}
               className="min-h-11 w-full rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
-              {followUpMutation.isPending ? "Generating..." : "Generate follow-up"}
+              {followUpMutation.isPending
+                ? "Generating..."
+                : "Generate follow-up"}
             </button>
           </div>
         </div>
 
         {followUp ? (
           <div className="mt-6 rounded-3xl border border-card bg-white/70 p-4 sm:p-6">
-            <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">Follow-up email</p>
-            <p className="mt-3 text-base font-semibold sm:text-lg">{followUp.subject}</p>
-            <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-foreground">{followUp.body}</p>
+            <p className="text-sm uppercase tracking-[0.24em] text-accent-strong">
+              Follow-up email
+            </p>
+            <p className="mt-3 text-base font-semibold sm:text-lg">
+              {followUp.subject}
+            </p>
+            <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-foreground">
+              {followUp.body}
+            </p>
           </div>
         ) : null}
       </section>

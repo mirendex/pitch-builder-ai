@@ -5,11 +5,16 @@ import * as Switch from "@radix-ui/react-switch";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { OLLAMA_BASE_URL, OPENROUTER_BASE_URL, useSettingsStore } from "@/stores/settings";
+import {
+  OLLAMA_BASE_URL,
+  OPENROUTER_BASE_URL,
+  useSettingsStore,
+} from "@/stores/settings";
 import { useUiStore } from "@/stores/ui";
 
 export function ByokModal() {
-  const { apiKey, provider, isConfigured, hasHydrated, configure } = useSettingsStore();
+  const { apiKey, provider, isConfigured, hasHydrated, configure } =
+    useSettingsStore();
   const { isSettingsOpen, setSettingsOpen } = useUiStore();
   const [draftKey, setDraftKey] = useState(apiKey);
   const [localMode, setLocalMode] = useState(provider === "ollama");
@@ -32,9 +37,12 @@ export function ByokModal() {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/35 backdrop-blur-[2px]" />
         <Dialog.Content className="glass-card fixed left-1/2 top-1/2 max-h-[min(680px,calc(100vh-24px))] w-[min(560px,calc(100%-24px))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[28px] p-5 sm:rounded-3xl sm:p-8">
-          <Dialog.Title className="text-2xl font-semibold sm:text-3xl">Connect your AI provider</Dialog.Title>
+          <Dialog.Title className="text-2xl font-semibold sm:text-3xl">
+            Connect your AI provider
+          </Dialog.Title>
           <Dialog.Description className="mt-3 text-sm leading-6 text-muted">
-            Bring your own OpenRouter key or switch to local Ollama mode. Keys stay in your browser.
+            Bring your own OpenRouter key or switch to local Ollama mode. Keys
+            stay in your browser.
           </Dialog.Description>
 
           <div className="mt-6 space-y-5 sm:mt-8 sm:space-y-6">
@@ -52,7 +60,9 @@ export function ByokModal() {
             <div className="flex flex-col gap-4 rounded-2xl border border-card bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="pr-2">
                 <p className="font-medium">Local Network (Ollama)</p>
-                <p className="text-sm text-muted">Route requests to http://localhost:11434/v1</p>
+                <p className="text-sm text-muted">
+                  Route requests to http://localhost:11434/v1
+                </p>
               </div>
               <Switch.Root
                 checked={localMode}

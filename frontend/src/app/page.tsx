@@ -10,7 +10,12 @@ import { toast } from "sonner";
 import { ByokModal } from "@/components/byok-modal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { deleteAnalysis, fetchAnalyses, startAnalysis, uploadAnalysis } from "@/lib/api";
+import {
+  deleteAnalysis,
+  fetchAnalyses,
+  startAnalysis,
+  uploadAnalysis,
+} from "@/lib/api";
 import type { AnalysisListItem } from "@/lib/analysis-types";
 import { useUiStore } from "@/stores/ui";
 
@@ -22,7 +27,10 @@ export default function HomePage() {
   const activeAnalysisId = useUiStore((state) => state.activeAnalysisId);
   const setSettingsOpen = useUiStore((state) => state.setSettingsOpen);
   const setActiveAnalysisId = useUiStore((state) => state.setActiveAnalysisId);
-  const analysesQuery = useQuery({ queryKey: ["analyses"], queryFn: fetchAnalyses });
+  const analysesQuery = useQuery({
+    queryKey: ["analyses"],
+    queryFn: fetchAnalyses,
+  });
   const analyzeMutation = useMutation({
     mutationFn: startAnalysis,
     onSuccess: (data) => {
@@ -59,7 +67,8 @@ export default function HomePage() {
   const dropzone = useDropzone({
     accept: {
       "text/plain": [".txt"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
       "text/csv": [".csv"],
       "application/pdf": [".pdf"],
     },
@@ -87,8 +96,9 @@ export default function HomePage() {
               Turn raw discovery notes into a boardroom-ready sales brief.
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted sm:mt-4 sm:text-base md:text-lg">
-              Drop in transcripts, CRM exports, or messy notes. The dashboard extracts pain points,
-              executive summaries, next steps, and follow-up emails with transparent live status.
+              Drop in transcripts, CRM exports, or messy notes. The dashboard
+              extracts pain points, executive summaries, next steps, and
+              follow-up emails with transparent live status.
             </p>
           </div>
 
@@ -118,12 +128,15 @@ export default function HomePage() {
                 Massive drag-and-drop zone for raw sales materials
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
-                Supports .txt, .docx, .csv, and .pdf. The backend parser routes each file type to the
-                right extraction service before the AI pipeline runs.
+                Supports .txt, .docx, .csv, and .pdf. The backend parser routes
+                each file type to the right extraction service before the AI
+                pipeline runs.
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm leading-6 text-muted">
-                  {selectedFile ? `Selected: ${selectedFile.name}` : "Click or drag one file into this zone."}
+                  {selectedFile
+                    ? `Selected: ${selectedFile.name}`
+                    : "Click or drag one file into this zone."}
                 </p>
                 <Button
                   type="button"
@@ -153,11 +166,17 @@ export default function HomePage() {
               />
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm leading-6 text-muted">
-                  Pasted input goes straight into the analysis pipeline without any upload step.
+                  Pasted input goes straight into the analysis pipeline without
+                  any upload step.
                 </p>
                 <Button
                   type="button"
-                  onClick={() => analyzeMutation.mutate({ rawText, filename: "pasted-input.txt" })}
+                  onClick={() =>
+                    analyzeMutation.mutate({
+                      rawText,
+                      filename: "pasted-input.txt",
+                    })
+                  }
                   disabled={!rawText.trim() || analyzeMutation.isPending}
                   className="w-full sm:w-auto"
                 >
@@ -173,15 +192,23 @@ export default function HomePage() {
             </p>
             <div className="mt-4 space-y-3">
               {analysesQuery.isLoading ? <p>Loading...</p> : null}
-              {Array.isArray(analysesQuery.data) && analysesQuery.data.length > 0
+              {Array.isArray(analysesQuery.data) &&
+              analysesQuery.data.length > 0
                 ? analysesQuery.data.map((analysis: AnalysisListItem) => (
                     <div
                       key={analysis.id}
                       className="flex items-start gap-3 rounded-2xl border border-card bg-white/70 p-4 transition hover:-translate-y-0.5"
                     >
-                      <Link href={`/analysis/${analysis.id}`} className="min-w-0 flex-1">
-                        <p className="truncate font-medium">{analysis.source_filename ?? "Untitled input"}</p>
-                        <p className="mt-1 text-sm capitalize text-muted">{analysis.status}</p>
+                      <Link
+                        href={`/analysis/${analysis.id}`}
+                        className="min-w-0 flex-1"
+                      >
+                        <p className="truncate font-medium">
+                          {analysis.source_filename ?? "Untitled input"}
+                        </p>
+                        <p className="mt-1 text-sm capitalize text-muted">
+                          {analysis.status}
+                        </p>
                       </Link>
                       <Button
                         type="button"
@@ -205,7 +232,8 @@ export default function HomePage() {
                     </div>
                   ))
                 : null}
-              {Array.isArray(analysesQuery.data) && analysesQuery.data.length === 0 ? (
+              {Array.isArray(analysesQuery.data) &&
+              analysesQuery.data.length === 0 ? (
                 <p className="text-sm text-muted">No analyses yet.</p>
               ) : null}
             </div>

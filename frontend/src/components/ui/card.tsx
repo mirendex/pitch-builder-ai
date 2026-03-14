@@ -6,7 +6,15 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {

@@ -11,7 +11,9 @@ type SettingsState = {
   provider: Provider;
   isConfigured: boolean;
   hasHydrated: boolean;
-  configure: (settings: Partial<Pick<SettingsState, "apiKey" | "baseUrl" | "provider">>) => void;
+  configure: (
+    settings: Partial<Pick<SettingsState, "apiKey" | "baseUrl" | "provider">>,
+  ) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
 };
 
@@ -35,7 +37,10 @@ export const useSettingsStore = create<SettingsState>()(
             apiKey: apiKey ?? state.apiKey,
             provider: nextProvider,
             baseUrl:
-              baseUrl ?? (nextProvider === "ollama" ? OLLAMA_BASE_URL : OPENROUTER_BASE_URL),
+              baseUrl ??
+              (nextProvider === "ollama"
+                ? OLLAMA_BASE_URL
+                : OPENROUTER_BASE_URL),
             isConfigured: true,
           };
         }),

@@ -11,7 +11,13 @@ def build_extraction_prompt(raw_text: str) -> list[dict[str, str]]:
             "role": "string | null",
             "industry": "string | null",
         },
-        "pain_points": [{"title": "string", "description": "string", "severity": "high|medium|low"}],
+        "pain_points": [
+            {
+                "title": "string",
+                "description": "string",
+                "severity": "high|medium|low",
+            }
+        ],
         "proposed_solutions": [
             {"title": "string", "description": "string", "linked_pain_points": ["string"]}
         ],
@@ -43,12 +49,16 @@ def build_json_repair_prompt(invalid_payload: str, validation_error: str) -> lis
     return [
         {
             "role": "system",
-            "content": "Repair malformed JSON. Return only valid JSON that satisfies the user's schema.",
+            "content": (
+                "Repair malformed JSON. Return only valid JSON "
+                "that satisfies the user's schema."
+            ),
         },
         {
             "role": "user",
             "content": (
-                "This previous response failed validation. Fix its JSON format and schema compliance.\n\n"
+                "This previous response failed validation. "
+                "Fix its JSON format and schema compliance.\n\n"
                 f"Validation error:\n{validation_error}\n\nInvalid payload:\n{invalid_payload}"
             ),
         },
@@ -68,7 +78,8 @@ def build_email_prompt(analysis_json: dict[str, object]) -> list[dict[str, str]]
         {
             "role": "user",
             "content": (
-                "Draft a follow-up email based on this sales brief. Return JSON only using this schema: "
+                "Draft a follow-up email based on this sales brief. "
+                "Return JSON only using this schema: "
                 f"{json.dumps(schema_hint)}\n\n"
                 f"{json.dumps(analysis_json)}"
             ),

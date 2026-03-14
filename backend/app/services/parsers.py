@@ -3,8 +3,8 @@ from __future__ import annotations
 from io import BytesIO, StringIO
 
 import pandas as pd
-from PyPDF2 import PdfReader
 from docx import Document
+from PyPDF2 import PdfReader
 
 
 class UnsupportedFileTypeError(ValueError):

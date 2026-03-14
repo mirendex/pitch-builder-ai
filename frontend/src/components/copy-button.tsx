@@ -19,7 +19,12 @@ export function CopyButton({ plainText, markdown }: CopyButtonProps) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <Button type="button" variant="outline" size="sm" className="bg-white/70 px-3 py-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="bg-white/70 px-3 py-2"
+        >
           <Copy className="h-4 w-4" />
           Copy
         </Button>

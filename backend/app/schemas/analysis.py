@@ -5,7 +5,6 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
 DEFAULT_MODEL = "google/gemini-3-flash-preview"
 
 

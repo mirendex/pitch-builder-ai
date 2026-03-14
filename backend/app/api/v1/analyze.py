@@ -2,21 +2,36 @@ from __future__ import annotations
 
 import asyncio
 import json
+from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+    status,
+)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
 from app.db.models import Analysis, AnalysisStatus
 from app.db.session import AsyncSessionLocal, get_session
-from app.schemas.analysis import DEFAULT_MODEL, AnalyzeRequest, AnalysisDetail, AnalysisListItem
+from app.schemas.analysis import DEFAULT_MODEL, AnalysisDetail, AnalysisListItem, AnalyzeRequest
 from app.services.parsers import UnsupportedFileTypeError, detect_and_parse
 from app.services.pipeline import create_status_channel, remove_status_channel, run_analysis
 from app.services.token_counter import TokenLimitExceededError, check_within_limit
 
-
 router = APIRouter(prefix="/api/v1", tags=["analysis"])
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
+UploadFileField = Annotated[UploadFile, File(...)]
+BaseUrlField = Annotated[str, Form(...)]
+ModelField = Annotated[str, Form()]
+ApiKeyField = Annotated[str | None, Form()]
 
 
 async def _serialize_analysis(analysis: Analysis) -> AnalysisDetail:
@@ -34,7 +49,7 @@ async def _serialize_analysis(analysis: Analysis) -> AnalysisDetail:
 
 
 @router.get("/analyses", response_model=list[AnalysisListItem])
-async def list_analyses(session: AsyncSession = Depends(get_session)) -> list[AnalysisListItem]:
+async def list_analyses(session: SessionDep) -> list[AnalysisListItem]:
     result = await session.execute(select(Analysis).order_by(Analysis.created_at.desc()))
     analyses = result.scalars().all()
     return [
@@ -50,7 +65,10 @@ async def list_analyses(session: AsyncSession = Depends(get_session)) -> list[An
 
 
 @router.get("/analyze/{analysis_id}", response_model=AnalysisDetail)
-async def get_analysis(analysis_id: str, session: AsyncSession = Depends(get_session)) -> AnalysisDetail:
+async def get_analysis(
+    analysis_id: str,
+    session: SessionDep,
+) -> AnalysisDetail:
     analysis = await session.get(Analysis, analysis_id)
     if analysis is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Analysis not found.")
@@ -58,7 +76,10 @@ async def get_analysis(analysis_id: str, session: AsyncSession = Depends(get_ses
 
 
 @router.delete("/analyze/{analysis_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_analysis(analysis_id: str, session: AsyncSession = Depends(get_session)) -> None:
+async def delete_analysis(
+    analysis_id: str,
+    session: SessionDep,
+) -> None:
     analysis = await session.get(Analysis, analysis_id)
     if analysis is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Analysis not found.")
@@ -69,7 +90,7 @@ async def delete_analysis(analysis_id: str, session: AsyncSession = Depends(get_
 @router.post("/analyze", status_code=status.HTTP_202_ACCEPTED)
 async def create_analysis(
     background_tasks: BackgroundTasks,
-    session: AsyncSession = Depends(get_session),
+    session: SessionDep,
     payload: AnalyzeRequest | None = None,
 ) -> dict[str, str]:
     if payload is None or not payload.raw_text:
@@ -106,11 +127,11 @@ async def create_analysis(
 @router.post("/analyze/upload", status_code=status.HTTP_202_ACCEPTED)
 async def upload_analysis(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),
-    base_url: str = Form(...),
-    model: str = Form(DEFAULT_MODEL),
-    api_key: str | None = Form(default=None),
-    session: AsyncSession = Depends(get_session),
+    file: UploadFileField,
+    base_url: BaseUrlField,
+    model: ModelField = DEFAULT_MODEL,
+    api_key: ApiKeyField = None,
+    session: SessionDep = None,
 ) -> dict[str, str]:
     file_bytes = await file.read()
     try:
@@ -145,7 +166,10 @@ async def upload_analysis(
 
 
 @router.get("/analyze/{analysis_id}/stream")
-async def stream_analysis(analysis_id: str, session: AsyncSession = Depends(get_session)) -> EventSourceResponse:
+async def stream_analysis(
+    analysis_id: str,
+    session: SessionDep,
+) -> EventSourceResponse:
     analysis = await session.get(Analysis, analysis_id)
     if analysis is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Analysis not found.")
@@ -158,7 +182,10 @@ async def stream_analysis(analysis_id: str, session: AsyncSession = Depends(get_
                 if analysis.status in {AnalysisStatus.DONE, AnalysisStatus.ERROR}:
                     refreshed = await session.get(Analysis, analysis_id)
                     if refreshed is not None:
-                        yield {"event": "status", "data": json.dumps({"status": refreshed.status_message})}
+                        yield {
+                            "event": "status",
+                            "data": json.dumps({"status": refreshed.status_message}),
+                        }
                     break
 
                 try:
@@ -174,7 +201,10 @@ async def stream_analysis(analysis_id: str, session: AsyncSession = Depends(get_
                         analysis.status = refreshed.status
                         analysis.status_message = refreshed.status_message
                         if analysis.status in {AnalysisStatus.DONE, AnalysisStatus.ERROR}:
-                            yield {"event": "status", "data": json.dumps({"status": analysis.status_message})}
+                            yield {
+                                "event": "status",
+                                "data": json.dumps({"status": analysis.status_message}),
+                            }
                             break
         finally:
             remove_status_channel(analysis_id, queue)

@@ -88,7 +88,12 @@ def client(session_factory, mocker):
     mocker.patch.object(analyze_module, "run_analysis", fake_run_analysis)
     mocker.patch(
         "app.api.v1.generate.generate_follow_up_email",
-        mocker.AsyncMock(return_value=FollowUpEmail(subject="Quick follow-up", body="Thanks for the call.")),
+        mocker.AsyncMock(
+            return_value=FollowUpEmail(
+                subject="Quick follow-up",
+                body="Thanks for the call.",
+            )
+        ),
     )
 
     with TestClient(app) as test_client:
@@ -115,7 +120,10 @@ def test_create_and_fetch_analysis(client: TestClient) -> None:
     detail_response = client.get(f"/api/v1/analyze/{analysis_id}")
     assert detail_response.status_code == 200
     assert detail_response.json()["status"] == "done"
-    assert detail_response.json()["result_json"]["client_profile"]["company"] == "Northstar Logistics"
+    assert (
+        detail_response.json()["result_json"]["client_profile"]["company"]
+        == "Northstar Logistics"
+    )
 
 
 def test_stream_analysis_returns_status_events(client: TestClient) -> None:
@@ -178,7 +186,12 @@ def test_generate_follow_up_uses_payload_override(client: TestClient) -> None:
                 status_message="Complete",
                 result_json=json.dumps(
                     {
-                        "client_profile": {"name": "Seed", "company": "SeedCo", "role": None, "industry": None},
+                        "client_profile": {
+                            "name": "Seed",
+                            "company": "SeedCo",
+                            "role": None,
+                            "industry": None,
+                        },
                         "pain_points": [],
                         "proposed_solutions": [],
                         "executive_summary": "seed",

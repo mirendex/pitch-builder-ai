@@ -24,8 +24,16 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(194, 109, 60, 0.18), transparent 32%),
-    radial-gradient(circle at top right, rgba(61, 122, 111, 0.14), transparent 28%),
+    radial-gradient(
+      circle at top left,
+      rgba(194, 109, 60, 0.18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(61, 122, 111, 0.14),
+      transparent 28%
+    ),
     linear-gradient(180deg, #f6f1e8 0%, #efe4d4 100%);
   color: var(--foreground);
   font-family: "Segoe UI", sans-serif;
@@ -87,7 +95,10 @@ textarea {
 }
 
 .grid-dots {
-  background-image: radial-gradient(rgba(31, 31, 26, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(31, 31, 26, 0.12) 1px,
+    transparent 1px
+  );
   background-size: 16px 16px;
 }
 
