@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import (
@@ -129,9 +130,9 @@ async def upload_analysis(
     background_tasks: BackgroundTasks,
     file: UploadFileField,
     base_url: BaseUrlField,
+    session: SessionDep,
     model: ModelField = DEFAULT_MODEL,
     api_key: ApiKeyField = None,
-    session: SessionDep = None,
 ) -> dict[str, str]:
     file_bytes = await file.read()
     try:
@@ -174,7 +175,7 @@ async def stream_analysis(
     if analysis is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Analysis not found.")
 
-    async def event_generator():
+    async def event_generator() -> AsyncGenerator[dict[str, str], None]:
         queue = create_status_channel(analysis_id)
         try:
             yield {"event": "status", "data": json.dumps({"status": analysis.status_message})}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -33,4 +33,7 @@ class LlmClient:
             response.raise_for_status()
             body = response.json()
 
-        return body["choices"][0]["message"]["content"]
+        content = cast(object, body["choices"][0]["message"]["content"])
+        if not isinstance(content, str):
+            raise ValueError("Provider returned a non-string chat completion content payload.")
+        return content

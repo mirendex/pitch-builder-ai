@@ -5,7 +5,7 @@ import json
 from collections import defaultdict
 
 from pydantic import BaseModel, ValidationError
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from tenacity import AsyncRetrying, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 from app.db.models import Analysis, AnalysisStatus
@@ -150,7 +150,7 @@ async def _generate_valid_structured_output(
 
 async def run_analysis(
     *,
-    session_factory,
+    session_factory: async_sessionmaker[AsyncSession],
     analysis_id: str,
     raw_text: str,
     api_key: str | None,
