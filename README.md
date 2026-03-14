@@ -210,3 +210,7 @@ npm run build
 - Analysis results are editable in the frontend before PDF export or follow-up generation.
 - The follow-up email uses the current edited analysis state, not just the original raw result.
 - The root README is intentionally product-facing; backend-specific details live in `backend/README.md`.
+
+## License
+
+MIT © 2026 — see [LICENSE](LICENSE) for full terms.
