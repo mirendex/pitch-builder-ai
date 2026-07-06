@@ -4,22 +4,34 @@ import type {
   AnalysisListItem,
   AnalysisResult,
   FollowUpEmail,
+  ModelInfo,
 } from "@/lib/analysis-types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const DEFAULT_MODEL = "google/gemini-3-flash-preview";
 
 type AnalyzeRequest = {
   rawText?: string;
   filename?: string;
 };
 
+export async function fetchModels(baseUrl: string) {
+  const response = await fetch(
+    `${API_URL}/api/v1/models?base_url=${encodeURIComponent(baseUrl)}`,
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load models.");
+  }
+
+  return (await response.json()) as ModelInfo[];
+}
+
 export async function uploadAnalysis(file: File) {
-  const { apiKey, baseUrl, provider } = useSettingsStore.getState();
+  const { apiKey, baseUrl, provider, model } = useSettingsStore.getState();
   const formData = new FormData();
   formData.append("file", file);
   formData.append("base_url", baseUrl);
-  formData.append("model", DEFAULT_MODEL);
+  formData.append("model", model);
   if (provider === "openrouter" && apiKey) {
     formData.append("api_key", apiKey);
   }
@@ -65,7 +77,7 @@ export async function deleteAnalysis(analysisId: string) {
 }
 
 export async function startAnalysis(payload: AnalyzeRequest) {
-  const { apiKey, baseUrl, provider } = useSettingsStore.getState();
+  const { apiKey, baseUrl, provider, model } = useSettingsStore.getState();
   const response = await fetch(`${API_URL}/api/v1/analyze`, {
     method: "POST",
     headers: {
@@ -76,6 +88,7 @@ export async function startAnalysis(payload: AnalyzeRequest) {
       source_filename: payload.filename,
       api_key: provider === "openrouter" ? apiKey : null,
       base_url: baseUrl,
+      model,
     }),
   });
 
@@ -105,7 +118,7 @@ export async function generateFollowUp(
   analysisId: string,
   analysisResult?: AnalysisResult | null,
 ) {
-  const { apiKey, baseUrl, provider } = useSettingsStore.getState();
+  const { apiKey, baseUrl, provider, model } = useSettingsStore.getState();
   const response = await fetch(`${API_URL}/api/v1/generate-email`, {
     method: "POST",
     headers: {
@@ -115,6 +128,7 @@ export async function generateFollowUp(
       analysis_id: analysisId,
       api_key: provider === "openrouter" ? apiKey : null,
       base_url: baseUrl,
+      model,
       analysis_result: analysisResult,
     }),
   });

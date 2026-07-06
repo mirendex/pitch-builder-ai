@@ -54,3 +54,9 @@ export type FollowUpEmail = {
   subject: string;
   body: string;
 };
+
+export type ModelInfo = {
+  id: string;
+  name?: string | null;
+  context_length?: number | null;
+};

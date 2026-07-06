@@ -48,6 +48,12 @@ class FollowUpEmail(BaseModel):
     body: str
 
 
+class ModelInfo(BaseModel):
+    id: str
+    name: str | None = None
+    context_length: int | None = None
+
+
 class AnalyzeRequest(BaseModel):
     raw_text: str | None = None
     source_filename: str | None = None

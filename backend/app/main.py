@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.analyze import router as analyze_router
 from app.api.v1.generate import router as generate_router
+from app.api.v1.models import router as models_router
 from app.db.session import init_db
 
 
@@ -38,3 +39,4 @@ async def health() -> dict[str, str]:
 
 app.include_router(analyze_router)
 app.include_router(generate_router)
+app.include_router(models_router)

@@ -14,6 +14,7 @@ The repository is organized as a monorepo with a Next.js frontend and a FastAPI 
 - Self-repairing JSON pipeline that retries malformed model output with repair prompts
 - Real-time status updates from the backend to the frontend via Server-Sent Events
 - Bring-your-own-key workflow for OpenRouter, plus local Ollama support for privacy-sensitive use cases
+- Searchable model picker fed by the provider's live model catalog, instead of a hardcoded model name
 - Editable analysis cards for pain points, proposed solutions, summary, next steps, and key metrics
 - Client-side PDF export for generated sales briefs
 - Follow-up email generation based on the current edited analysis state
@@ -171,12 +172,13 @@ When the frontend opens, the settings modal lets you configure:
 - Provider: `openrouter` or `ollama`
 - Base URL: defaults to OpenRouter or local Ollama depending on provider
 - API key: required for OpenRouter, omitted for Ollama
-- Model: defaults to `google/gemini-3-flash-preview`
+- Model: searchable picker backed by the provider's live model list (defaults to `google/gemini-3-flash-preview`)
 
 Behavior notes:
 
 - Settings are persisted in the browser via Zustand persistence.
 - The backend receives `base_url`, `model`, and optional `api_key` on each request.
+- The model picker calls `GET /api/v1/models?base_url=...`, a thin backend proxy to the provider's OpenAI-compatible `/models` endpoint, so the list always reflects what's currently available (e.g. OpenRouter's live catalog).
 - Ollama mode expects a compatible local endpoint at `http://localhost:11434/v1`.
 
 For backend runtime configuration, API details, and developer notes, see `backend/README.md`.

@@ -9,16 +9,20 @@ type SettingsState = {
   apiKey: string;
   baseUrl: string;
   provider: Provider;
+  model: string;
   isConfigured: boolean;
   hasHydrated: boolean;
   configure: (
-    settings: Partial<Pick<SettingsState, "apiKey" | "baseUrl" | "provider">>,
+    settings: Partial<
+      Pick<SettingsState, "apiKey" | "baseUrl" | "provider" | "model">
+    >,
   ) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
 };
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 const OLLAMA_BASE_URL = "http://localhost:11434/v1";
+const DEFAULT_MODEL = "google/gemini-3-flash-preview";
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
@@ -26,16 +30,18 @@ export const useSettingsStore = create<SettingsState>()(
       apiKey: "",
       baseUrl: OPENROUTER_BASE_URL,
       provider: "openrouter",
+      model: DEFAULT_MODEL,
       isConfigured: false,
       hasHydrated: false,
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
-      configure: ({ apiKey, baseUrl, provider }) =>
+      configure: ({ apiKey, baseUrl, provider, model }) =>
         set((state) => {
           const nextProvider = provider ?? state.provider;
 
           return {
             apiKey: apiKey ?? state.apiKey,
             provider: nextProvider,
+            model: model ?? state.model,
             baseUrl:
               baseUrl ??
               (nextProvider === "ollama"
@@ -51,6 +57,7 @@ export const useSettingsStore = create<SettingsState>()(
         apiKey: state.apiKey,
         baseUrl: state.baseUrl,
         provider: state.provider,
+        model: state.model,
         isConfigured: state.isConfigured,
       }),
       onRehydrateStorage: () => (state) => {
@@ -60,4 +67,4 @@ export const useSettingsStore = create<SettingsState>()(
   ),
 );
 
-export { OLLAMA_BASE_URL, OPENROUTER_BASE_URL };
+export { DEFAULT_MODEL, OLLAMA_BASE_URL, OPENROUTER_BASE_URL };

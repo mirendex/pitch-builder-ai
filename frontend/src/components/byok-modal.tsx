@@ -5,7 +5,9 @@ import * as Switch from "@radix-ui/react-switch";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ModelSelect } from "@/components/model-select";
 import {
+  DEFAULT_MODEL,
   OLLAMA_BASE_URL,
   OPENROUTER_BASE_URL,
   useSettingsStore,
@@ -13,11 +15,12 @@ import {
 import { useUiStore } from "@/stores/ui";
 
 export function ByokModal() {
-  const { apiKey, provider, isConfigured, hasHydrated, configure } =
+  const { apiKey, provider, model, isConfigured, hasHydrated, configure } =
     useSettingsStore();
   const { isSettingsOpen, setSettingsOpen } = useUiStore();
   const [draftKey, setDraftKey] = useState(apiKey);
   const [localMode, setLocalMode] = useState(provider === "ollama");
+  const [draftModel, setDraftModel] = useState(model);
 
   useEffect(() => {
     if (hasHydrated && !isConfigured) {
@@ -28,9 +31,11 @@ export function ByokModal() {
   useEffect(() => {
     setDraftKey(apiKey);
     setLocalMode(provider === "ollama");
-  }, [apiKey, provider, isSettingsOpen]);
+    setDraftModel(model);
+  }, [apiKey, provider, model, isSettingsOpen]);
 
   const canSave = localMode || draftKey.trim().length > 0;
+  const draftBaseUrl = localMode ? OLLAMA_BASE_URL : OPENROUTER_BASE_URL;
 
   return (
     <Dialog.Root open={isSettingsOpen} onOpenChange={setSettingsOpen}>
@@ -72,6 +77,15 @@ export function ByokModal() {
                 <Switch.Thumb className="block h-5 w-5 translate-x-1 rounded-full bg-white transition data-[state=checked]:translate-x-6" />
               </Switch.Root>
             </div>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-medium">Model</span>
+              <ModelSelect
+                baseUrl={draftBaseUrl}
+                value={draftModel}
+                onChange={setDraftModel}
+              />
+            </label>
           </div>
 
           <div className="mt-6 flex flex-col-reverse gap-3 sm:mt-8 sm:flex-row sm:justify-end">
@@ -93,6 +107,7 @@ export function ByokModal() {
                   apiKey: localMode ? "" : draftKey.trim(),
                   provider: localMode ? "ollama" : "openrouter",
                   baseUrl: localMode ? OLLAMA_BASE_URL : OPENROUTER_BASE_URL,
+                  model: draftModel.trim() || DEFAULT_MODEL,
                 });
                 setSettingsOpen(false);
               }}

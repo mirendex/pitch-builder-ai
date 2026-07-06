@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import {
+  DEFAULT_MODEL,
   OLLAMA_BASE_URL,
   OPENROUTER_BASE_URL,
   useSettingsStore,
@@ -17,7 +18,18 @@ describe("useSettingsStore", () => {
     const state = useSettingsStore.getState();
     expect(state.provider).toBe("openrouter");
     expect(state.baseUrl).toBe(OPENROUTER_BASE_URL);
+    expect(state.model).toBe(DEFAULT_MODEL);
     expect(state.isConfigured).toBe(false);
+  });
+
+  it("updates the selected model without touching other settings", () => {
+    useSettingsStore.getState().configure({ apiKey: "sk-test" });
+    useSettingsStore
+      .getState()
+      .configure({ model: "anthropic/claude-3.5-sonnet" });
+    const state = useSettingsStore.getState();
+    expect(state.model).toBe("anthropic/claude-3.5-sonnet");
+    expect(state.apiKey).toBe("sk-test");
   });
 
   it("switches the base URL to Ollama's default when no explicit URL is given", () => {

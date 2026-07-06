@@ -37,3 +37,14 @@ class LlmClient:
         if not isinstance(content, str):
             raise ValueError("Provider returned a non-string chat completion content payload.")
         return content
+
+    async def list_models(self, *, base_url: str) -> list[dict[str, Any]]:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.get(f"{base_url.rstrip('/')}/models")
+            response.raise_for_status()
+            body = response.json()
+
+        models = cast(object, body.get("data", []))
+        if not isinstance(models, list):
+            raise ValueError("Provider returned an unexpected models payload.")
+        return cast(list[dict[str, Any]], models)
