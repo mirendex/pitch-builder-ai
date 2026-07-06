@@ -4,7 +4,7 @@ from io import BytesIO, StringIO
 
 import pandas as pd
 from docx import Document
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 
 class UnsupportedFileTypeError(ValueError):

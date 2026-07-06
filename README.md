@@ -1,5 +1,8 @@
 # Pitch Builder AI
 
+[![CI](https://github.com/popa098/pitch-builder-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/popa098/pitch-builder-ai/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Pitch Builder AI is a full-stack B2B sales intelligence dashboard that turns raw discovery call transcripts, CRM notes, and uploaded documents into structured sales briefs and follow-up emails.
 
 The repository is organized as a monorepo with a Next.js frontend and a FastAPI backend. The system focuses on practical sales workflows: ingest messy source material, normalize it, run structured extraction through an LLM, stream progress to the UI, and let users edit the result before exporting or generating a follow-up.
@@ -57,6 +60,7 @@ Supported modes:
 - React Dropzone for uploads
 - Sonner for notifications
 - `@react-pdf/renderer` for PDF export
+- Vitest and React Testing Library for unit tests
 
 ### Backend
 
@@ -68,7 +72,7 @@ Supported modes:
 - Tenacity for retry loops
 - `sse-starlette` for streaming responses
 - `tiktoken` for token-limit checks
-- `PyPDF2`, `python-docx`, and `pandas` for document parsing
+- `pypdf`, `python-docx`, and `pandas` for document parsing
 
 ## Repository layout
 
@@ -201,6 +205,7 @@ From `frontend/`:
 
 ```bash
 npm run lint
+npm run test
 npm run build
 ```
 
