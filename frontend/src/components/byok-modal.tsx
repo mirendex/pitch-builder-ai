@@ -2,6 +2,7 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Switch from "@radix-ui/react-switch";
+import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ export function ByokModal() {
   const [draftKey, setDraftKey] = useState(apiKey);
   const [localMode, setLocalMode] = useState(provider === "ollama");
   const [draftModel, setDraftModel] = useState(model);
+  const [isKeyVisible, setIsKeyVisible] = useState(false);
 
   useEffect(() => {
     if (hasHydrated && !isConfigured) {
@@ -53,13 +55,29 @@ export function ByokModal() {
           <div className="mt-6 space-y-5 sm:mt-8 sm:space-y-6">
             <label className="block space-y-2">
               <span className="text-sm font-medium">OpenRouter API key</span>
-              <Input
-                value={draftKey}
-                onChange={(event) => setDraftKey(event.target.value)}
-                disabled={localMode}
-                placeholder="sk-or-v1-..."
-                className="bg-surface"
-              />
+              <div className="relative">
+                <Input
+                  type={isKeyVisible ? "text" : "password"}
+                  value={draftKey}
+                  onChange={(event) => setDraftKey(event.target.value)}
+                  disabled={localMode}
+                  placeholder="sk-or-v1-..."
+                  className="bg-surface pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsKeyVisible((visible) => !visible)}
+                  disabled={localMode}
+                  aria-label={isKeyVisible ? "Hide API key" : "Show API key"}
+                  className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isKeyVisible ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </label>
 
             <div className="flex flex-col gap-4 rounded-2xl border border-card bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">

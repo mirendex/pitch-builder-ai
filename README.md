@@ -1,6 +1,6 @@
 # Pitch Builder AI
 
-[![CI](https://github.com/popa098/pitch-builder-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/popa098/pitch-builder-ai/actions/workflows/ci.yml)
+[![CI](https://github.com/mirendex/pitch-builder-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/mirendex/pitch-builder-ai/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Pitch Builder AI is a full-stack B2B sales intelligence dashboard that turns raw discovery call transcripts, CRM notes, and uploaded documents into structured sales briefs and follow-up emails.

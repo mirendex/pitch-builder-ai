@@ -17,6 +17,7 @@ import {
   uploadAnalysis,
 } from "@/lib/api";
 import type { AnalysisListItem } from "@/lib/analysis-types";
+import { deriveTitleFromText } from "@/lib/utils";
 import { useUiStore } from "@/stores/ui";
 
 export default function HomePage() {
@@ -174,7 +175,7 @@ export default function HomePage() {
                   onClick={() =>
                     analyzeMutation.mutate({
                       rawText,
-                      filename: "pasted-input.txt",
+                      filename: deriveTitleFromText(rawText),
                     })
                   }
                   disabled={!rawText.trim() || analyzeMutation.isPending}
